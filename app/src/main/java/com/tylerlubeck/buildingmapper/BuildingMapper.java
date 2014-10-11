@@ -6,6 +6,9 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ListView;
 
 
 public class BuildingMapper extends Activity {
@@ -14,9 +17,19 @@ public class BuildingMapper extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_building_mapper);
-        Context context = getApplicationContext();
-        AccessPointManager ap = new AccessPointManager(context);
-        ap.printAll();
+        Button getAPs = (Button) findViewById(R.id.get_access_points_btn);
+
+        getAPs.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ListView items = (ListView) findViewById(R.id.list_of_access_points);
+                Context context = getApplicationContext();
+                AccessPointManager ap = new AccessPointManager(context);
+                AccessPointListAdapter accessPointListAdapter = new AccessPointListAdapter(context, ap.getAccessPoints());
+                items.setAdapter(accessPointListAdapter);
+            }
+        });
+
     }
 
     @Override

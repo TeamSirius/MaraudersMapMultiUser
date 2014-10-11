@@ -1,11 +1,12 @@
 package com.tylerlubeck.buildingmapper;
 
+import java.util.Comparator;
 import java.util.Date;
 
 /**
  * Created by brettfischlerandkennethwapman on 10/11/14.
  */
-public class AccessPoint {
+public class AccessPoint implements Comparable<AccessPoint>{
     private String bssid;
     private double rss;
     private Date date;
@@ -36,5 +37,10 @@ public class AccessPoint {
     double getRSS()
     {
         return rss;
+    }
+
+    @Override
+    public int compareTo(AccessPoint accessPoint) {
+        return Double.compare(this.rss, accessPoint.getRSS());
     }
 }

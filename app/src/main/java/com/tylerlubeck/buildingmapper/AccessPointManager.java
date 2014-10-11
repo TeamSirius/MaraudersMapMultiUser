@@ -6,6 +6,8 @@ import android.net.wifi.WifiManager;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -29,7 +31,12 @@ public class AccessPointManager {
         for (final ScanResult r : results) {
             aps.add(new AccessPoint(r.BSSID, r.level, new Date()));
         }
+        Collections.sort(aps, Collections.reverseOrder());
         return aps;
+    }
+
+    public ArrayList<AccessPoint> getAccessPoints() {
+        return this.findAccessPoints();
     }
 
     public void saveAll(int loc_id)
