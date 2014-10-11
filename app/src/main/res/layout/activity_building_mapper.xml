@@ -8,9 +8,28 @@
     android:paddingBottom="@dimen/activity_vertical_margin"
     tools:context=".BuildingMapper">
 
-    <TextView
-        android:text="@string/hello_world"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+    <ListView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/list_of_access_points"
+        android:layout_above="@+id/location_picker_spinner"/>
+    <Spinner
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/location_picker_spinner"
+        android:layout_above="@+id/get_access_points_btn"/>
+    <Button
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/get_access_points_btn"
+        android:layout_above="@+id/save_access_points_btn"
+        android:text="@string/get_access_points_btn_txt"
+        />
+    <Button
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/save_access_points_btn"
+        android:layout_alignParentBottom="true"
+        android:text="@string/save_access_points_btn_txt"/>
 
 </RelativeLayout>

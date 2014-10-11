@@ -2,6 +2,7 @@ package com.tylerlubeck.buildingmapper;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -13,7 +14,6 @@ public class BuildingMapper extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_building_mapper);
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
