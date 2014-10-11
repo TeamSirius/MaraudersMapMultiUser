@@ -1,7 +1,9 @@
 package com.tylerlubeck.buildingmapper;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -12,6 +14,9 @@ public class BuildingMapper extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_building_mapper);
+        Context context = getApplicationContext();
+        AccessPointManager ap = new AccessPointManager(context);
+        ap.printAll();
     }
 
 
