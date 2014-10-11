@@ -3,6 +3,7 @@ package com.tylerlubeck.buildingmapper;
 import android.content.Context;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -35,6 +36,14 @@ public class AccessPointManager {
     {
         for (AccessPoint p : points) {
             p.save(loc_id, 0);
+        }
+    }
+
+    public void printAll()
+    {
+        for (AccessPoint p : points) {
+            Log.d("BUILDINGMAPPER", p.getBSSID());
+            Log.d("BUILDINGMAPPER", Double.toString(p.getRSS()));
         }
     }
 }

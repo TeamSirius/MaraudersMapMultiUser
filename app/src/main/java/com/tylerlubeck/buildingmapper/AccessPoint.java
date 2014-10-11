@@ -27,4 +27,14 @@ public class AccessPoint {
         this.std_dev = std_dev;
         // Save to table
     }
+
+    String getBSSID()
+    {
+        return bssid;
+    }
+
+    double getRSS()
+    {
+        return rss;
+    }
 }
