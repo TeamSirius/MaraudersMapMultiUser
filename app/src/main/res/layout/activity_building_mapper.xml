@@ -12,6 +12,11 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:id="@+id/list_of_access_points"
+        android:layout_above="@+id/room_picker_spinner"/>
+    <Spinner
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/room_picker_spinner"
         android:layout_above="@+id/location_picker_spinner"/>
     <Spinner
         android:layout_width="fill_parent"
