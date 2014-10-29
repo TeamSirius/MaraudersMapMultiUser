@@ -32,11 +32,11 @@ public class AccessPointListAdapter extends ArrayAdapter<AccessPoint> {
         View rowView = inflater.inflate(R.layout.access_point_list_item, parent, false);
         TextView bssidView = (TextView) rowView.findViewById(R.id.bssid_view);
         TextView rssView = (TextView) rowView.findViewById(R.id.rss_view);
-        TextView dateView = (TextView) rowView.findViewById(R.id.date_view);
+        //TextView dateView = (TextView) rowView.findViewById(R.id.date_view);
 
         bssidView.setText(this.accessPoints.get(position).getBSSID());
         rssView.setText(String.valueOf(this.accessPoints.get(position).getRSS()));
-        dateView.setText("Some Date");
+        //dateView.setText("Some Date");
 
         return rowView;
     }

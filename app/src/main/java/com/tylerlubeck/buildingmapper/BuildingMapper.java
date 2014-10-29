@@ -13,55 +13,55 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Spinner;
 
+import org.apache.http.message.BasicNameValuePair;
+
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class BuildingMapper extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        final Context global_ctx = this;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_building_mapper);
         Button getAPs = (Button) findViewById(R.id.get_access_points_btn);
         Spinner room_picker = (Spinner) findViewById(R.id.room_picker_spinner);
 
-        ArrayList<String> empty_drop_down = new ArrayList<String>();
-
-        ArrayAdapter<String> room_adapter  = new ArrayAdapter<String>(this,
-                android.R.layout.simple_list_item_1,
-                android.R.id.text1, empty_drop_down);
-
-
+        FloorListAdapter room_adapter = new FloorListAdapter(global_ctx, new ArrayList<Floor>());
 
         room_picker.setAdapter(room_adapter);
-
 
         GetFloorsAsyncTask fill_room_drop_down = new GetFloorsAsyncTask(getString(R.string.get_room_names_url),
                                                                            room_adapter,
                                                                            null /* params */);
         fill_room_drop_down.execute();
-        /*
         room_picker.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 Spinner point_picker = (Spinner) findViewById(R.id.location_picker_spinner);
-                String room = (String)adapterView.getItemAtPosition(i);
-                if (room.equals("")) {
-                    ArrayAdapter<String> adapter = (ArrayAdapter)point_picker.getAdapter();
-                    if (adapter != null) {
-                        adapter.clear();
-                        adapter.notifyDataSetChanged();
-                    }
-                    return;
+                Floor room = (Floor)adapterView.getItemAtPosition(i);
+
+                ArrayAdapter<String> adapter = (ArrayAdapter)point_picker.getAdapter();
+                if (adapter != null) {
+                    adapter.clear();
+                    adapter.notifyDataSetChanged();
                 }
+
                 Log.d("BUILDINGMAPPER", "GOT ROOM: " + room);
-                ArrayAdapter<String> points_adapter  = new ArrayAdapter<String>(getApplicationContext(),
+                ArrayAdapter<String> points_adapter  = new ArrayAdapter<String>(global_ctx,
                         android.R.layout.simple_list_item_1,
                         android.R.id.text1, new ArrayList<String>());
-                FillDropDownAsyncTask fill_points_drop_down = new FillDropDownAsyncTask(getString(R.string.get_access_points_url), points_adapter);
-                fill_points_drop_down.execute();
+                List<BasicNameValuePair> params = new ArrayList<BasicNameValuePair>();
+                params.add(new BasicNameValuePair("building", room.getBuilding()));
+                params.add(new BasicNameValuePair("floor", String.valueOf(room.getFloor())));
+                String url = getString(R.string.get_access_points_url) + "/" + room.getBuilding() + "/" + String.valueOf(room.getFloor());
+
                 point_picker.setAdapter(points_adapter);
-                point_picker.setEnabled(true);
+                //GetPointsAsyncTask fill_points_drop_down = new GetPointsAsyncTask(getString(R.string.get_access_points_url), points_adapter, params);
+                GetPointsAsyncTask fill_points_drop_down = new GetPointsAsyncTask(url, points_adapter, null);
+                fill_points_drop_down.execute();
             }
 
             @Override
@@ -73,9 +73,6 @@ public class BuildingMapper extends Activity {
                 adapter.notifyDataSetChanged();
             }
         });
-        */
-
-
 
         getAPs.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -83,10 +80,11 @@ public class BuildingMapper extends Activity {
                 ListView items = (ListView) findViewById(R.id.list_of_access_points);
                 Context context = getApplicationContext();
                 AccessPointManager ap = new AccessPointManager(context);
-                AccessPointListAdapter accessPointListAdapter = new AccessPointListAdapter(context, ap.getAccessPoints());
+                AccessPointListAdapter accessPointListAdapter = new AccessPointListAdapter(global_ctx, ap.getAccessPoints());
                 items.setAdapter(accessPointListAdapter);
             }
         });
+
 
     }
 

@@ -43,6 +43,7 @@ public abstract class FillDropDownAsyncTask<T> extends AsyncTask<Void, Void, Arr
             }
         }
         this.url = uri_builder.build().toString();
+        Log.d("BUILDINGMAPPER", this.url);
 
 
     }
@@ -58,16 +59,6 @@ public abstract class FillDropDownAsyncTask<T> extends AsyncTask<Void, Void, Arr
             HttpEntity http_entity = http_response.getEntity();
             response = EntityUtils.toString(http_entity);
             response_list = processData(response);
-            /*
-            Log.d("BUILDINGMAPPER", "Response is: " + response);
-            JSONArray json_array = new JSONArray(response);
-
-            int length = json_array.length();
-            for(int i = 0; i < length; i++) {
-                response_list.add(json_array.getString(i));
-            }
-            */
-
         } catch (ClientProtocolException e) {
             e.printStackTrace();
         } catch (IOException e) {

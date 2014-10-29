@@ -7,16 +7,6 @@
     <TextView
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/bssid_view" />
-    <TextView
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/rss_view"/>
-    <!--
-    <TextView
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/date_view"/>
-        -->
+        android:id="@+id/floor_name" />
 
 </LinearLayout>

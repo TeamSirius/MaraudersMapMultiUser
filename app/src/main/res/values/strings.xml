@@ -6,7 +6,7 @@
     <string name="action_settings">Settings</string>
     <string name="get_access_points_btn_txt">Get Access Points I See</string>
     <string name="save_access_points_btn_txt">Save</string>
-    <string name="get_access_points_url">http://echo.jsontest.com/?json=["one","two","three","four"]</string>
+    <string name="get_access_points_url">http://mapbuilder.herokuapp.com/aps</string>
     <string name="get_room_names_url">http://mapbuilder.herokuapp.com/floors</string>
 
 </resources>
