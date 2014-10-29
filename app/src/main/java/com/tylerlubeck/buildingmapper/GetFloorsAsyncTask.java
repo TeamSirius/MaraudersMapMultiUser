@@ -13,7 +13,7 @@ import java.util.List;
 /**
  * Created by Tyler on 10/28/2014.
  */
-public class GetFloorsAsyncTask extends FillDropDownAsyncTask<Floor> {
+public class GetFloorsAsyncTask extends GenericGETTask<Floor> {
     public GetFloorsAsyncTask(String _url, ArrayAdapter _adapter, List<BasicNameValuePair> _params) {
         super(_url, _adapter, _params);
     }

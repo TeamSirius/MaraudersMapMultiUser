@@ -25,7 +25,7 @@ import java.util.List;
 /**
  * Created by Tyler on 10/16/2014.
  */
-public abstract class FillDropDownAsyncTask<T> extends AsyncTask<Void, Void, ArrayList<T>> {
+public abstract class GenericGETTask<T> extends AsyncTask<Void, Void, ArrayList<T>> {
 
     abstract ArrayList<T> processData(String data) throws JSONException;
 
@@ -33,7 +33,7 @@ public abstract class FillDropDownAsyncTask<T> extends AsyncTask<Void, Void, Arr
     private final ArrayAdapter adapter;
     private final List<BasicNameValuePair> params;
 
-    public FillDropDownAsyncTask(String _url, ArrayAdapter _adapter, List<BasicNameValuePair> _params) {
+    public GenericGETTask(String _url, ArrayAdapter _adapter, List<BasicNameValuePair> _params) {
         this.adapter = _adapter;
         this.params = _params;
         Uri.Builder uri_builder = Uri.parse(_url).buildUpon();
