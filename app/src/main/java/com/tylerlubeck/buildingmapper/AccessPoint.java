@@ -1,5 +1,8 @@
 package com.tylerlubeck.buildingmapper;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.Comparator;
 import java.util.Date;
 
@@ -42,5 +45,12 @@ public class AccessPoint implements Comparable<AccessPoint>{
     @Override
     public int compareTo(AccessPoint accessPoint) {
         return Double.compare(this.rss, accessPoint.getRSS());
+    }
+
+    public JSONObject toJSON() throws JSONException {
+        JSONObject representation = new JSONObject();
+        representation.put("MAC", this.bssid);
+        representation.put("strength", this.rss);
+        return representation;
     }
 }

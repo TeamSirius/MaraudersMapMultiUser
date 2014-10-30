@@ -14,6 +14,9 @@ import android.widget.ListView;
 import android.widget.Spinner;
 
 import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +30,8 @@ public class BuildingMapper extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_building_mapper);
         Button getAPs = (Button) findViewById(R.id.get_access_points_btn);
-        Spinner room_picker = (Spinner) findViewById(R.id.room_picker_spinner);
+        final Spinner room_picker = (Spinner) findViewById(R.id.room_picker_spinner);
+        final Spinner point_picker = (Spinner) findViewById(R.id.location_picker_spinner);
 
         FloorListAdapter room_adapter = new FloorListAdapter(global_ctx, new ArrayList<Floor>());
 
@@ -40,7 +44,6 @@ public class BuildingMapper extends Activity {
         room_picker.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                Spinner point_picker = (Spinner) findViewById(R.id.location_picker_spinner);
                 Floor room = (Floor)adapterView.getItemAtPosition(i);
 
                 ArrayAdapter<String> adapter = (ArrayAdapter)point_picker.getAdapter();
@@ -77,11 +80,33 @@ public class BuildingMapper extends Activity {
         getAPs.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ListView items = (ListView) findViewById(R.id.list_of_access_points);
-                Context context = getApplicationContext();
-                AccessPointManager ap = new AccessPointManager(context);
-                AccessPointListAdapter accessPointListAdapter = new AccessPointListAdapter(global_ctx, ap.getAccessPoints());
-                items.setAdapter(accessPointListAdapter);
+                //for(int i = 0; i < 100; i++) {
+                    ListView items = (ListView) findViewById(R.id.list_of_access_points);
+                    Context context = getApplicationContext();
+                    AccessPointManager ap = new AccessPointManager(context);
+                    AccessPointListAdapter accessPointListAdapter = new AccessPointListAdapter(global_ctx, ap.getAccessPoints());
+                    items.setAdapter(accessPointListAdapter);
+                    JSONArray all_objects = new JSONArray();
+                    for (AccessPoint point : ap.getAccessPoints()) {
+                        try {
+                            all_objects.put(point.toJSON());
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    JSONObject send_data = new JSONObject();
+                    Location selected_location = (Location) point_picker.getSelectedItem();
+                    try {
+                        send_data.put("lid", selected_location.getId());
+                        send_data.put("APS", all_objects);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    PostAccessPointsTask post_access_points = new PostAccessPointsTask(getString(R.string.post_access_points), send_data, global_ctx);
+                    post_access_points.execute();
+                //}
             }
         });
 

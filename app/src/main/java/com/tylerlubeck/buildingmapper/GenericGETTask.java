@@ -72,8 +72,6 @@ public abstract class GenericGETTask<T> extends AsyncTask<Void, Void, ArrayList<
 
     @Override
     protected void onPostExecute(ArrayList<T> entries) {
-        Log.d("BUILDINGMAPPER", "SUCCESS");
-
         this.adapter.clear();
         this.adapter.addAll(entries);
         this.adapter.notifyDataSetChanged();
