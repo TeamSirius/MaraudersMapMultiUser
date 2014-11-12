@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class BuildingMapper extends Activity implements View.OnClickListener {
+public class BuildingMapper extends Activity implements View.OnClickListener, AdapterView.OnItemSelectedListener {
 
     private Spinner point_picker;
     private Spinner room_picker;
@@ -42,48 +42,13 @@ public class BuildingMapper extends Activity implements View.OnClickListener {
         point_picker = (Spinner) findViewById(R.id.location_picker_spinner);
 
         FloorListAdapter room_adapter = new FloorListAdapter(global_ctx, new ArrayList<Floor>());
-
         room_picker.setAdapter(room_adapter);
 
         GetFloorsAsyncTask fill_room_drop_down = new GetFloorsAsyncTask(getString(R.string.get_room_names_url),
                                                                            room_adapter,
                                                                            null /* params */);
         fill_room_drop_down.execute();
-        room_picker.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                Floor room = (Floor)adapterView.getItemAtPosition(i);
-
-                ArrayAdapter<String> adapter = (ArrayAdapter)point_picker.getAdapter();
-                if (adapter != null) {
-                    adapter.clear();
-                    adapter.notifyDataSetChanged();
-                }
-
-                Log.d("BUILDINGMAPPER", "GOT ROOM: " + room);
-                ArrayAdapter<String> points_adapter  = new ArrayAdapter<String>(global_ctx,
-                        android.R.layout.simple_list_item_1,
-                        android.R.id.text1, new ArrayList<String>());
-                List<BasicNameValuePair> params = new ArrayList<BasicNameValuePair>();
-                params.add(new BasicNameValuePair("building", room.getBuilding()));
-                params.add(new BasicNameValuePair("floor", String.valueOf(room.getFloor())));
-                String url = getString(R.string.get_access_points_url) + "/" + room.getBuilding() + "/" + String.valueOf(room.getFloor());
-
-                point_picker.setAdapter(points_adapter);
-                //GetPointsAsyncTask fill_points_drop_down = new GetPointsAsyncTask(getString(R.string.get_access_points_url), points_adapter, params);
-                GetPointsAsyncTask fill_points_drop_down = new GetPointsAsyncTask(url, points_adapter, null);
-                fill_points_drop_down.execute();
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-                Log.d("BUILDINGMAPPER", "NOTHING SELECTED");
-                Spinner point_picker = (Spinner) findViewById(R.id.location_picker_spinner);
-                ArrayAdapter<String> adapter = (ArrayAdapter)point_picker.getAdapter();
-                adapter.clear();
-                adapter.notifyDataSetChanged();
-            }
-        });
+        room_picker.setOnItemSelectedListener(this);
 
         saveBtn.setOnClickListener(this);
         getAPs.setOnClickListener(this);
@@ -158,5 +123,36 @@ public class BuildingMapper extends Activity implements View.OnClickListener {
                 break;
         }
 
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+        Floor room = (Floor)adapterView.getItemAtPosition(i);
+        ArrayAdapter<String> adapter = (ArrayAdapter)point_picker.getAdapter();
+        if (adapter != null) {
+            adapter.clear();
+            adapter.notifyDataSetChanged();
+        }
+        ArrayAdapter<String> points_adapter  = new ArrayAdapter<String>(this,
+                android.R.layout.simple_list_item_1,
+                android.R.id.text1, new ArrayList<String>());
+        List<BasicNameValuePair> params = new ArrayList<BasicNameValuePair>();
+        params.add(new BasicNameValuePair("building", room.getBuilding()));
+        params.add(new BasicNameValuePair("floor", String.valueOf(room.getFloor())));
+        String url = getString(R.string.get_access_points_url) + "/" + room.getBuilding() + "/" + String.valueOf(room.getFloor());
+
+        point_picker.setAdapter(points_adapter);
+        //GetPointsAsyncTask fill_points_drop_down = new GetPointsAsyncTask(getString(R.string.get_access_points_url), points_adapter, params);
+        GetPointsAsyncTask fill_points_drop_down = new GetPointsAsyncTask(url, points_adapter, null);
+        fill_points_drop_down.execute();
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> adapterView) {
+        Log.d("BUILDINGMAPPER", "NOTHING SELECTED");
+        Spinner point_picker = (Spinner) findViewById(R.id.location_picker_spinner);
+        ArrayAdapter<String> adapter = (ArrayAdapter)point_picker.getAdapter();
+        adapter.clear();
+        adapter.notifyDataSetChanged();
     }
 }
