@@ -10,9 +10,9 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Spinner;
-import android.widget.ImageView;
 
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
@@ -141,10 +141,10 @@ public class BuildingMapper extends Activity implements View.OnClickListener, Ad
         params.add(new BasicNameValuePair("building", room.getBuilding()));
         params.add(new BasicNameValuePair("floor", String.valueOf(room.getFloor())));
 
-        ImageView image = (ImageView) findViewById(R.id.floorImage);
-        String mDrawableName = room.getBuilding().toLowerCase() + String.valueOf(room.getFloor());
-        image.setImageResource(getResources().getIdentifier(mDrawableName , "drawable", getPackageName()));
+        ImageView image = (ImageView) findViewById(R.id.floorImage); //Requires view to have floorImage as id
 
+        FloorMapImage Fimage = new FloorMapImage(room.getBuilding(),room.getFloor(),image,this);
+        Fimage.draw_point(50,50);
         String url = getString(R.string.get_access_points_url) + "/" + room.getBuilding() + "/" + String.valueOf(room.getFloor());
 
         point_picker.setAdapter(points_adapter);
