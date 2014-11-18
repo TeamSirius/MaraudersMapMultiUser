@@ -44,8 +44,6 @@ public abstract class GenericGETTask<T> extends AsyncTask<Void, Void, ArrayList<
         }
         this.url = uri_builder.build().toString();
         Log.d("BUILDINGMAPPER", this.url);
-
-
     }
 
     @Override

@@ -12,6 +12,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
@@ -32,6 +33,7 @@ public class BuildingMapper extends Activity implements View.OnClickListener, Ad
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         final Context global_ctx = this;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_building_mapper);
@@ -41,13 +43,14 @@ public class BuildingMapper extends Activity implements View.OnClickListener, Ad
         room_picker = (Spinner) findViewById(R.id.room_picker_spinner);
         point_picker = (Spinner) findViewById(R.id.location_picker_spinner);
 
-        FloorListAdapter room_adapter = new FloorListAdapter(global_ctx, new ArrayList<Floor>());
+        FloorListAdapter room_adapter = new FloorListAdapter(this, new ArrayList<Floor>());
         room_picker.setAdapter(room_adapter);
 
         GetFloorsAsyncTask fill_room_drop_down = new GetFloorsAsyncTask(getString(R.string.get_room_names_url),
                                                                            room_adapter,
                                                                            null /* params */);
         fill_room_drop_down.execute();
+
         room_picker.setOnItemSelectedListener(this);
 
         saveBtn.setOnClickListener(this);
@@ -55,23 +58,14 @@ public class BuildingMapper extends Activity implements View.OnClickListener, Ad
         whereAmI.setOnClickListener(this);
     }
 
-
-    JSONArray getAccessPoints(Context ctx, ListView listView) {
-        AccessPointManager ap = new AccessPointManager(ctx);
-        AccessPointListAdapter accessPointListAdapter = new AccessPointListAdapter(ctx, ap.getAccessPoints());
+    JSONArray getAccessPoints(ListView listView, int numberOfPolls) {
+        AccessPointManager ap = new AccessPointManager(this);
+        AccessPointListAdapter accessPointListAdapter = new AccessPointListAdapter(this, ap.getAccessPoints());
         listView.setAdapter(accessPointListAdapter);
-        JSONArray all_objects = new JSONArray();
-        for (AccessPoint point : ap.getAccessPoints()) {
-            try {
-                all_objects.put(point.toJSON());
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
+        JSONArray all_objects = ap.pollAccessPoints(numberOfPolls);
 
         return all_objects;
     }
-
 
     void postToServer(JSONArray data, int id, Context ctx) {
         JSONObject send_data = new JSONObject();
@@ -106,23 +100,29 @@ public class BuildingMapper extends Activity implements View.OnClickListener, Ad
     @Override
     public void onClick(View view) {
         ListView items = (ListView) findViewById(R.id.list_of_access_points);
-        JSONArray all_objects;
+        JSONArray all_objects; //TODO: can I just fill this now?
         Location selected_location;
         switch (view.getId()) {
             case R.id.where_am_i_btn:
-                all_objects = getAccessPoints(this, items);
-                postToServer(all_objects, -1, this);
+                all_objects = getAccessPoints(items, 10);
+                Log.d("BUILDINGMAPPER", all_objects.toString());
+                //postToServer(all_objects, -1, this);
                 break;
             case R.id.get_access_points_btn:
-                getAccessPoints(this, items);
+                getAccessPoints(items, 1);
                 break;
             case R.id.save_access_points_btn:
-                all_objects = getAccessPoints(this, items);
-                selected_location = (Location) point_picker.getSelectedItem();
-                postToServer(all_objects, selected_location.getId(), this);
+                int nums[] = {2, 10, 30, 60, 100};
+                int ids[]  = {100, 101, 102, 103, 104};
+                for (int i = 0; i < 5; i++) {
+                    all_objects = getAccessPoints(items, nums[i]);
+                    // selected_location = (Location) point_picker.getSelectedItem();
+                    postToServer(all_objects, ids[i], this);
+                   // Log.d("BUILDINGMAPPER", all_objects.toString());
+                    Toast.makeText(this, "Done with pass for: " + nums[i], Toast.LENGTH_SHORT).show();
+                }
                 break;
         }
-
     }
 
     @Override
