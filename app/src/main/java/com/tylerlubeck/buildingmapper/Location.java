@@ -1,5 +1,7 @@
 package com.tylerlubeck.buildingmapper;
 
+import android.util.Log;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -9,6 +11,8 @@ import org.json.JSONObject;
 public class Location {
     String verbose_name;
     int id;
+    int x;
+    int y;
 
     Location(String _name, int _id) {
         this.id = _id;
@@ -17,6 +21,8 @@ public class Location {
 
     Location(JSONObject obj) throws JSONException {
         this.id = obj.getInt("id");
+        this.x = obj.getInt("x");
+        this.y = obj.getInt("y");
         this.verbose_name = obj.getString("verbose_name");
     }
 

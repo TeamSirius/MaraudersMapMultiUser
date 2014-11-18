@@ -30,6 +30,7 @@ public class BuildingMapper extends Activity implements View.OnClickListener, Ad
     private Button whereAmI;
     private Button getAPs;
     private Button saveBtn;
+    private FloorMapImage Fimage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -128,13 +129,14 @@ public class BuildingMapper extends Activity implements View.OnClickListener, Ad
 
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-        Floor room = (Floor)adapterView.getItemAtPosition(i);
-        ArrayAdapter<String> adapter = (ArrayAdapter)point_picker.getAdapter();
+        Floor room = (Floor) adapterView.getItemAtPosition(i);
+        ArrayAdapter<String> adapter = (ArrayAdapter) point_picker.getAdapter();
         if (adapter != null) {
             adapter.clear();
             adapter.notifyDataSetChanged();
         }
-        ArrayAdapter<String> points_adapter  = new ArrayAdapter<String>(this,
+        Log.d("ATTEMPTING:","ERROR");
+        ArrayAdapter<String> points_adapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_list_item_1,
                 android.R.id.text1, new ArrayList<String>());
         List<BasicNameValuePair> params = new ArrayList<BasicNameValuePair>();
@@ -143,8 +145,8 @@ public class BuildingMapper extends Activity implements View.OnClickListener, Ad
 
         ImageView image = (ImageView) findViewById(R.id.floorImage); //Requires view to have floorImage as id
 
-        FloorMapImage Fimage = new FloorMapImage(room.getBuilding(),room.getFloor(),image,this);
-        Fimage.draw_point(50,50);
+        Fimage = new FloorMapImage(room.getBuilding(), room.getFloor(), image, this);
+        point_picker.setOnItemSelectedListener(Fimage);;
         String url = getString(R.string.get_access_points_url) + "/" + room.getBuilding() + "/" + String.valueOf(room.getFloor());
 
         point_picker.setAdapter(points_adapter);
