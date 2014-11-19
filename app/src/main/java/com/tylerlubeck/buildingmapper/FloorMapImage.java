@@ -62,6 +62,20 @@ public class FloorMapImage  extends Activity implements AdapterView.OnItemSelect
         image.setImageBitmap(bmp);
     }
 
+    void draw_point_noclear(int x, int y){
+        Log.d("DRAWING AT:",Integer.toString(x) + ":" + Integer.toString(y));
+        Bitmap bmp = ((BitmapDrawable)image.getDrawable()).getBitmap();
+        if(x >= 0 && y >= 0 ) {
+            float scaled_x = x * (float) w / (float) original_w;
+            float scaled_y = y * (float) h / (float) original_h;
+            Paint paint = new Paint();
+            paint.setColor(Color.BLUE);
+            Canvas canvas = new Canvas(bmp);
+            canvas.drawCircle(scaled_x, scaled_y, radius, paint);
+        }
+        image.setImageBitmap(bmp);
+    }
+
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
         Location loc = (Location) adapterView.getItemAtPosition(i);

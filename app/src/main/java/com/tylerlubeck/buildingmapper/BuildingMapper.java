@@ -84,7 +84,7 @@ public class BuildingMapper extends Activity implements View.OnClickListener, Ad
             e.printStackTrace();
         }
 
-        PostAccessPointsTask post_access_points = new PostAccessPointsTask(getString(R.string.post_access_points), send_data, ctx);
+        PostAccessPointsTask post_access_points = new PostAccessPointsTask(getString(R.string.post_access_points), send_data, ctx, Fimage);
         post_access_points.execute();
     }
 
@@ -135,7 +135,6 @@ public class BuildingMapper extends Activity implements View.OnClickListener, Ad
             adapter.clear();
             adapter.notifyDataSetChanged();
         }
-        Log.d("ATTEMPTING:","ERROR");
         ArrayAdapter<String> points_adapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_list_item_1,
                 android.R.id.text1, new ArrayList<String>());
@@ -146,7 +145,8 @@ public class BuildingMapper extends Activity implements View.OnClickListener, Ad
         ImageView image = (ImageView) findViewById(R.id.floorImage); //Requires view to have floorImage as id
 
         Fimage = new FloorMapImage(room.getBuilding(), room.getFloor(), image, this);
-        point_picker.setOnItemSelectedListener(Fimage);;
+        point_picker.setOnItemSelectedListener(Fimage);
+
         String url = getString(R.string.get_access_points_url) + "/" + room.getBuilding() + "/" + String.valueOf(room.getFloor());
 
         point_picker.setAdapter(points_adapter);
