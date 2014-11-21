@@ -3,6 +3,7 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 15
     buildToolsVersion "20.0.0"
+    apply plugin: 'android'
 
     defaultConfig {
         applicationId "com.tylerlubeck.buildingmapper"
@@ -13,7 +14,7 @@ android {
     }
     buildTypes {
         release {
-            //runProguard false
+            apply plugin: 'android'
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
@@ -21,4 +22,12 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
+}
+
+task showClasspath << {
+    buildscript.configurations.classpath.each { println it.name }
+}
+
+task showVersion << {
+    println buildscript.configurations.classpath.resolvedConfiguration.firstLevelModuleDependencies.moduleVersion
 }
