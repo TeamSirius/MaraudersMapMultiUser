@@ -53,4 +53,9 @@ public class AccessPoint implements Comparable<AccessPoint>{
         representation.put("strength", this.rss);
         return representation;
     }
+
+    @Override
+    public String toString() {
+        return String.format("%s: %f", this.bssid, this.rss);
+    }
 }

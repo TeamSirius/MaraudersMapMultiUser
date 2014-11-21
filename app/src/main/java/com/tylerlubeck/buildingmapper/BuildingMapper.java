@@ -58,11 +58,12 @@ public class BuildingMapper extends Activity implements View.OnClickListener, Ad
     }
 
 
-    JSONArray getAccessPoints(Context ctx, ListView listView) {
-        AccessPointManager ap = new AccessPointManager(ctx);
+    JSONArray getAccessPoints(Context ctx, ListView listView, int num_polls) {
+        AccessPointManager ap = new AccessPointManager(ctx, num_polls);
+        JSONArray all_objects = new JSONArray();
+        /*
         AccessPointListAdapter accessPointListAdapter = new AccessPointListAdapter(ctx, ap.getAccessPoints());
         listView.setAdapter(accessPointListAdapter);
-        JSONArray all_objects = new JSONArray();
         for (AccessPoint point : ap.getAccessPoints()) {
             try {
                 all_objects.put(point.toJSON());
@@ -71,6 +72,7 @@ public class BuildingMapper extends Activity implements View.OnClickListener, Ad
             }
         }
 
+        */
         return all_objects;
     }
 
@@ -112,16 +114,18 @@ public class BuildingMapper extends Activity implements View.OnClickListener, Ad
         Location selected_location;
         switch (view.getId()) {
             case R.id.where_am_i_btn:
-                all_objects = getAccessPoints(this, items);
-                postToServer(all_objects, -1, this);
+                all_objects = getAccessPoints(this, items, 2);
+                //TODO: Uncomment
+                //postToServer(all_objects, -1, this);
                 break;
             case R.id.get_access_points_btn:
-                getAccessPoints(this, items);
+                getAccessPoints(this, items, 10);
                 break;
             case R.id.save_access_points_btn:
-                all_objects = getAccessPoints(this, items);
+                all_objects = getAccessPoints(this, items, 10);
                 selected_location = (Location) point_picker.getSelectedItem();
-                postToServer(all_objects, selected_location.getId(), this);
+                //TODO: Uncomment
+               // postToServer(all_objects, selected_location.getId(), this);
                 break;
         }
 
