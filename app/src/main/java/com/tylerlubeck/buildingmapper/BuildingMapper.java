@@ -107,9 +107,14 @@ public class BuildingMapper extends Activity implements View.OnClickListener, Ad
             case R.id.save_access_points_btn:
                 selected_location = (Location) point_picker.getSelectedItem();
                 getAccessPoints(20, true /* upload */, selected_location.getId());
+                int num_items = point_picker.getAdapter().getCount();
+                int next_pos = point_picker.getSelectedItemPosition() + 1;
+                int next_index = num_items < next_pos ? num_items : next_pos;
+                point_picker.setSelection(next_index);
                 break;
         }
     }
+
 
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {

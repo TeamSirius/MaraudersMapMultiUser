@@ -35,7 +35,6 @@ public class AccessPointManager {
     Context context;
     FloorMapImage FImage;
 
-
     AccessPointManager(Context context, int _num_polls, boolean upload, int id, FloorMapImage FImage) {
         this.FImage = FImage;
         this.context = context;
@@ -127,7 +126,6 @@ public class AccessPointManager {
         }
     }
 
-
     void postToServer(JSONArray data, int id) {
         JSONObject send_data = new JSONObject();
         try {
@@ -144,7 +142,6 @@ public class AccessPointManager {
                                                                            this.FImage);
         post_access_points.execute();
     }
-
 
     private class WifiScanReceived extends BroadcastReceiver {
         @Override
