@@ -34,15 +34,15 @@ public class PostAccessPointsTask extends GenericPOSTTask {
     @Override
     void processData(HttpResponse response) {
         Toast.makeText(this.ctx, response.getStatusLine().toString(), Toast.LENGTH_LONG).show();
-        Log.d("BUILDINGMAPPER", "SENT REQUEST");
+        Log.d("BUILDINGMAPPER", "UPLOADED DATA");
         if(Fimage != null){
             try {
                 String jsonString = EntityUtils.toString(response.getEntity());
-                JSONObject reponseJson = new JSONObject(jsonString);
-                Log.d("JSON RESPONSE:",reponseJson.toString());
-                if(!reponseJson.has("error")) {
-                    int x = reponseJson.getInt("x");
-                    int y = reponseJson.getInt("y");
+                JSONObject responseJson = new JSONObject(jsonString);
+                Log.d("JSON RESPONSE:", responseJson.toString());
+                if(!responseJson.has("error")) {
+                    int x = responseJson.getInt("x");
+                    int y = responseJson.getInt("y");
                     Fimage.draw_point_noclear(x, y);
                 }
             } catch (JSONException e) {

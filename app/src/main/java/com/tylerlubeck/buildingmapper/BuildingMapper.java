@@ -60,31 +60,8 @@ public class BuildingMapper extends Activity implements View.OnClickListener, Ad
         whereAmI.setOnClickListener(this);
     }
 
-<<<<<<< HEAD
-
-    JSONArray getAccessPoints(Context ctx, ListView listView, int num_polls) {
-        AccessPointManager ap = new AccessPointManager(ctx, num_polls);
-        JSONArray all_objects = new JSONArray();
-        /*
-        AccessPointListAdapter accessPointListAdapter = new AccessPointListAdapter(ctx, ap.getAccessPoints());
-        listView.setAdapter(accessPointListAdapter);
-        for (AccessPoint point : ap.getAccessPoints()) {
-            try {
-                all_objects.put(point.toJSON());
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-=======
-    JSONArray getAccessPoints(ListView listView, int numberOfPolls) {
-        AccessPointManager ap = new AccessPointManager(this);
-        AccessPointListAdapter accessPointListAdapter = new AccessPointListAdapter(this, ap.getAccessPoints());
-        listView.setAdapter(accessPointListAdapter);
-        JSONArray all_objects = ap.pollAccessPoints(numberOfPolls);
->>>>>>> multiple_pulses
-
-        */
-        return all_objects;
+    void getAccessPoints(int numberOfPolls, boolean upload, int id) {
+        new AccessPointManager(this, numberOfPolls, upload, id, this.Fimage);
     }
 
     void postToServer(JSONArray data, int id, Context ctx) {
@@ -119,23 +96,17 @@ public class BuildingMapper extends Activity implements View.OnClickListener, Ad
 
     @Override
     public void onClick(View view) {
-        ListView items = (ListView) findViewById(R.id.list_of_access_points);
-        JSONArray all_objects; //TODO: can I just fill this now?
         Location selected_location;
         switch (view.getId()) {
             case R.id.where_am_i_btn:
-                all_objects = getAccessPoints(this, items, 2);
-                //TODO: Uncomment
-                //postToServer(all_objects, -1, this);
+                getAccessPoints(2, true /* upload */, -1 /* id, not used because not uploading */);
                 break;
             case R.id.get_access_points_btn:
-                getAccessPoints(this, items, 10);
+                getAccessPoints(1, false /* upload */, 0 /* id, not used because not uploading */);
                 break;
             case R.id.save_access_points_btn:
-                all_objects = getAccessPoints(this, items, 10);
                 selected_location = (Location) point_picker.getSelectedItem();
-                //TODO: Uncomment
-               // postToServer(all_objects, selected_location.getId(), this);
+                getAccessPoints(20, true /* upload */, selected_location.getId());
                 break;
         }
     }

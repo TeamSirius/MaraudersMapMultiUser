@@ -29,31 +29,39 @@ public class AccessPointManager {
     int num_times_called;
     int num_polls;
     Date last_scan;
+    HashMap<String, ArrayList<Integer>> MAC_Aggregator;
+    boolean upload;
+    int location_id;
+    Context context;
+    FloorMapImage FImage;
 
-    AccessPointManager(Context context, int _num_polls)
-    {
+
+    AccessPointManager(Context context, int _num_polls, boolean upload, int id, FloorMapImage FImage) {
+        this.FImage = FImage;
+        this.context = context;
+        this.location_id = id;
+        this.upload = upload;
+        this.points = new ArrayList<AccessPoint>();
         this.wifiManager = (WifiManager)context.getSystemService(Context.WIFI_SERVICE);
-        this.points = findAccessPoints();
         this.num_times_called = 0;
         this.num_polls = _num_polls;
         this.last_scan = new Date();
+        this.MAC_Aggregator = new HashMap<String, ArrayList<Integer>>();
         context.registerReceiver(new WifiScanReceived(), new IntentFilter(wifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
         this.wifiManager.startScan();
     }
 
-    private ArrayList<AccessPoint> findAccessPoints()
-    {
-        ArrayList<AccessPoint> aps = new ArrayList<AccessPoint>();
+    private void findAccessPoints() {
         final List<ScanResult> results = this.wifiManager.getScanResults();
         for (final ScanResult r : results) {
-            aps.add(new AccessPoint(r.BSSID, r.level, new Date()));
+            if (! this.MAC_Aggregator.containsKey(r.BSSID)) {
+                this.MAC_Aggregator.put(r.BSSID, new ArrayList<Integer>());
+            }
+            this.MAC_Aggregator.get(r.BSSID).add(r.level);
         }
-        Collections.sort(aps, Collections.reverseOrder());
-        return aps;
     }
 
-
-    private double standard_deviation(ArrayList<Double> strengths, double mean) {
+    private double standard_deviation(ArrayList<Integer> strengths, double mean) {
         int numberOfStrengths = strengths.size();
         if (numberOfStrengths <= 1) {
             return 0;
@@ -70,7 +78,7 @@ public class AccessPointManager {
         return Math.sqrt(variance);
     }
 
-    private double mean_value(ArrayList<Double> strengths) {
+    private double mean_value(ArrayList<Integer> strengths) {
         int numberOfStrengths = strengths.size();
         if(numberOfStrengths <= 0) {
             return 0;
@@ -84,40 +92,11 @@ public class AccessPointManager {
         return sum / (double)numberOfStrengths;
     }
 
-
-    private HashMap<String, ArrayList<Double>> aggregateAccessPoints(int numberOfPolls) {
-        HashMap<String, ArrayList<Double>>  MAC_Aggregator = new HashMap<String, ArrayList<Double>>();
-        String points_MAC;
-
-
-        for(int i = 0; i < numberOfPolls; i++) {
-            this.wifiManager.startScan();
-
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
-            Log.d("BUILDINGMAPPER", "RUN " + i);
-            ArrayList<AccessPoint> points_this_poll = this.findAccessPoints();
-            for(AccessPoint point : points_this_poll) {
-                points_MAC = point.getBSSID();
-                if (! MAC_Aggregator.containsKey(points_MAC)) {
-                    MAC_Aggregator.put(points_MAC, new ArrayList<Double>());
-                }
-                MAC_Aggregator.get(points_MAC).add(point.getRSS());
-            }
-
-        }
-        return MAC_Aggregator;
-    }
-
-    private JSONArray averageAccessPointsMap(HashMap<String, ArrayList<Double>> accessPointsMap) {
+    private JSONArray averageAccessPointsMap() {
         double mean;
         double stdDeviation;
         JSONArray all_objects = new JSONArray();
-        for(Map.Entry<String, ArrayList<Double>> entry: accessPointsMap.entrySet()) {
+        for(Map.Entry<String, ArrayList<Integer>> entry: this.MAC_Aggregator.entrySet()) {
             JSONObject representation = new JSONObject();
             Log.d("BUILDINGMAPPER", entry.getKey() + ": " + entry.getValue().toString());
             mean = mean_value(entry.getValue());
@@ -135,42 +114,53 @@ public class AccessPointManager {
         return all_objects;
     }
 
-    public JSONArray pollAccessPoints(int numberOfPolls) {
-        HashMap<String, ArrayList<Double>> accessPointsMap = aggregateAccessPoints(numberOfPolls);
-        return averageAccessPointsMap(accessPointsMap);
-    }
-
-    public ArrayList<AccessPoint> getAccessPoints() {
-        return this.findAccessPoints();
-    }
-
-    public void saveAll(int loc_id)
-    {
+    public void saveAll(int loc_id) {
         for (AccessPoint p : this.points) {
             p.save(loc_id, 0);
         }
     }
 
-    public void printAll()
-    {
+    public void printAll() {
         for (AccessPoint p : this.points) {
             Log.d("BUILDINGMAPPER", p.getBSSID());
             Log.d("BUILDINGMAPPER", Double.toString(p.getRSS()));
         }
     }
 
-    private class WifiScanReceived extends BroadcastReceiver {
-        //TODO: Do we need to register receiver in Manifest?
 
+    void postToServer(JSONArray data, int id) {
+        JSONObject send_data = new JSONObject();
+        try {
+            send_data.put("APS", data);
+            send_data.put("lid", id);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        String url = this.context.getString(R.string.post_access_points);
+        PostAccessPointsTask post_access_points = new PostAccessPointsTask(url,
+                                                                           send_data,
+                                                                           this.context,
+                                                                           this.FImage);
+        post_access_points.execute();
+    }
+
+
+    private class WifiScanReceived extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if(num_times_called <= num_polls ) {
+            if(num_times_called < num_polls ) {
+                findAccessPoints();
+                /* Print Info */
                 Date now = new Date();
                 Log.d("BUILDINGMAPPER", Long.toString(now.getTime() - last_scan.getTime()));
                 last_scan = now;
                 Log.d("BUILDINGMAPPER", "Got wifi scan number" + num_times_called);
-                Log.d("BUILDINGMAPPER", String.valueOf(findAccessPoints()));
                 wifiManager.startScan();
+            }
+            if (num_times_called == num_polls && upload) {
+                JSONArray uploadable = averageAccessPointsMap();
+                postToServer(uploadable, location_id);
             }
             num_times_called++;
         }
