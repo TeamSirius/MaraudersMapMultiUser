@@ -44,10 +44,18 @@ public class PostAccessPointsTask extends GenericPOSTTask {
                     int y = responseJson.getInt("y");
                     Fimage.draw_point_noclear(x, y);
                     Log.d("BUILDINGMAPPER", "UPLOADED DATA SUCCESS");
+                    Toast.makeText(this.ctx, "UPLOADED DATA SUCCESS", Toast.LENGTH_LONG).show();
+                } else {
+                    Log.d("BUILDINGMAPPER", "UPLOADED DATA FAIL");
+                    Toast.makeText(this.ctx, "UPLOADED DATA FAIL", Toast.LENGTH_LONG).show();
                 }
             } catch (JSONException e) {
+                Log.d("BUILDINGMAPPER", "UPLOADED DATA FAIL: JSONEXCEPTION");
+                Toast.makeText(this.ctx, "UPLOADED DATA FAIL", Toast.LENGTH_LONG).show();
                 e.printStackTrace();
             }catch (IOException e){
+                Log.d("BUILDINGMAPPER", "UPLOADED DATA FAIL: IOEXCEPTION");
+                Toast.makeText(this.ctx, "UPLOADED DATA FAIL", Toast.LENGTH_LONG).show();
                 e.printStackTrace();
             }
         }
