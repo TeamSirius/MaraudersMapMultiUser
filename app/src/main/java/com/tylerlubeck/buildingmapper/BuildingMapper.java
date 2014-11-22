@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
@@ -34,6 +35,7 @@ public class BuildingMapper extends Activity implements View.OnClickListener, Ad
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         final Context global_ctx = this;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_building_mapper);
@@ -43,13 +45,14 @@ public class BuildingMapper extends Activity implements View.OnClickListener, Ad
         room_picker = (Spinner) findViewById(R.id.room_picker_spinner);
         point_picker = (Spinner) findViewById(R.id.location_picker_spinner);
 
-        FloorListAdapter room_adapter = new FloorListAdapter(global_ctx, new ArrayList<Floor>());
+        FloorListAdapter room_adapter = new FloorListAdapter(this, new ArrayList<Floor>());
         room_picker.setAdapter(room_adapter);
 
         GetFloorsAsyncTask fill_room_drop_down = new GetFloorsAsyncTask(getString(R.string.get_room_names_url),
                                                                            room_adapter,
                                                                            null /* params */);
         fill_room_drop_down.execute();
+
         room_picker.setOnItemSelectedListener(this);
 
         saveBtn.setOnClickListener(this);
@@ -57,6 +60,7 @@ public class BuildingMapper extends Activity implements View.OnClickListener, Ad
         whereAmI.setOnClickListener(this);
     }
 
+<<<<<<< HEAD
 
     JSONArray getAccessPoints(Context ctx, ListView listView, int num_polls) {
         AccessPointManager ap = new AccessPointManager(ctx, num_polls);
@@ -71,11 +75,17 @@ public class BuildingMapper extends Activity implements View.OnClickListener, Ad
                 e.printStackTrace();
             }
         }
+=======
+    JSONArray getAccessPoints(ListView listView, int numberOfPolls) {
+        AccessPointManager ap = new AccessPointManager(this);
+        AccessPointListAdapter accessPointListAdapter = new AccessPointListAdapter(this, ap.getAccessPoints());
+        listView.setAdapter(accessPointListAdapter);
+        JSONArray all_objects = ap.pollAccessPoints(numberOfPolls);
+>>>>>>> multiple_pulses
 
         */
         return all_objects;
     }
-
 
     void postToServer(JSONArray data, int id, Context ctx) {
         JSONObject send_data = new JSONObject();
@@ -110,7 +120,7 @@ public class BuildingMapper extends Activity implements View.OnClickListener, Ad
     @Override
     public void onClick(View view) {
         ListView items = (ListView) findViewById(R.id.list_of_access_points);
-        JSONArray all_objects;
+        JSONArray all_objects; //TODO: can I just fill this now?
         Location selected_location;
         switch (view.getId()) {
             case R.id.where_am_i_btn:
@@ -128,7 +138,6 @@ public class BuildingMapper extends Activity implements View.OnClickListener, Ad
                // postToServer(all_objects, selected_location.getId(), this);
                 break;
         }
-
     }
 
     @Override
