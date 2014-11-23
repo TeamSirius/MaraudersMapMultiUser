@@ -2,6 +2,7 @@ package com.tylerlubeck.buildingmapper;
 
 import android.app.Activity;
 import android.content.Context;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -11,7 +12,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -33,35 +33,13 @@ public class BuildingMapper extends Activity implements View.OnClickListener, Ad
     private Button saveBtn;
     private FloorMapImage Fimage;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-
-        final Context global_ctx = this;
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_building_mapper);
-        getAPs = (Button) findViewById(R.id.get_access_points_btn);
-        whereAmI = (Button) findViewById(R.id.where_am_i_btn);
-        saveBtn = (Button) findViewById(R.id.save_access_points_btn);
-        room_picker = (Spinner) findViewById(R.id.room_picker_spinner);
-        point_picker = (Spinner) findViewById(R.id.location_picker_spinner);
-
-        FloorListAdapter room_adapter = new FloorListAdapter(this, new ArrayList<Floor>());
-        room_picker.setAdapter(room_adapter);
-
-        GetFloorsAsyncTask fill_room_drop_down = new GetFloorsAsyncTask(getString(R.string.get_room_names_url),
-                                                                           room_adapter,
-                                                                           null /* params */);
-        fill_room_drop_down.execute();
-
-        room_picker.setOnItemSelectedListener(this);
-
-        saveBtn.setOnClickListener(this);
-        getAPs.setOnClickListener(this);
-        whereAmI.setOnClickListener(this);
-    }
-
     void getAccessPoints(int numberOfPolls, boolean upload, int id) {
         new AccessPointManager(this, numberOfPolls, upload, id, this.Fimage);
+    }
+
+    boolean isWifiEnabled() {
+        WifiManager wifi = (WifiManager)getSystemService(Context.WIFI_SERVICE);
+        return wifi.isWifiEnabled();
     }
 
     void postToServer(JSONArray data, int id, Context ctx) {
@@ -78,10 +56,29 @@ public class BuildingMapper extends Activity implements View.OnClickListener, Ad
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.building_mapper, menu);
-        return true;
+    protected void onCreate(Bundle savedInstanceState) {
+        final Context global_ctx = this;
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_building_mapper);
+        getAPs = (Button) findViewById(R.id.get_access_points_btn);
+        whereAmI = (Button) findViewById(R.id.where_am_i_btn);
+        saveBtn = (Button) findViewById(R.id.save_access_points_btn);
+        room_picker = (Spinner) findViewById(R.id.room_picker_spinner);
+        point_picker = (Spinner) findViewById(R.id.location_picker_spinner);
+
+        FloorListAdapter room_adapter = new FloorListAdapter(this, new ArrayList<Floor>());
+        room_picker.setAdapter(room_adapter);
+
+        GetFloorsAsyncTask fill_room_drop_down = new GetFloorsAsyncTask(getString(R.string.get_room_names_url),
+                room_adapter,
+                null /* params */);
+        fill_room_drop_down.execute();
+
+        room_picker.setOnItemSelectedListener(this);
+
+        saveBtn.setOnClickListener(this);
+        getAPs.setOnClickListener(this);
+        whereAmI.setOnClickListener(this);
     }
 
     @Override
@@ -95,26 +92,39 @@ public class BuildingMapper extends Activity implements View.OnClickListener, Ad
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.building_mapper, menu);
+        return true;
+    }
+
+    @Override
     public void onClick(View view) {
         Location selected_location;
+        if (! isWifiEnabled()) {
+            Toast.makeText(this, "Turn your wifi on, Dan", Toast.LENGTH_LONG).show();
+            return;
+        }
         switch (view.getId()) {
-            case R.id.where_am_i_btn:
-                getAccessPoints(2, true /* upload */, -1 /* id, not used because not uploading */);
-                break;
             case R.id.get_access_points_btn:
+                Toast.makeText(this, "About to do 1 scan", Toast.LENGTH_LONG).show();
                 getAccessPoints(1, false /* upload */, 0 /* id, not used because not uploading */);
                 break;
             case R.id.save_access_points_btn:
+                Toast.makeText(this, "About to do 30 scans", Toast.LENGTH_LONG).show();
                 selected_location = (Location) point_picker.getSelectedItem();
-                getAccessPoints(20, true /* upload */, selected_location.getId());
-                int num_items = point_picker.getAdapter().getCount();
-                int next_pos = point_picker.getSelectedItemPosition() + 1;
+                getAccessPoints(30, true /* upload */, selected_location.getId());
+                int num_items = point_picker.getAdapter().getCount() - 1;
+                int next_pos = point_picker.getSelectedItemPosition() + 4;
                 int next_index = num_items < next_pos ? num_items : next_pos;
-                point_picker.setSelection(next_index);
+                //point_picker.setSelection(next_index);
+                break;
+            case R.id.where_am_i_btn:
+                Toast.makeText(this, "About to do 2 scans", Toast.LENGTH_LONG).show();
+                getAccessPoints(2, true /* upload */, -1 /* id, not used because not uploading */);
                 break;
         }
     }
-
 
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {

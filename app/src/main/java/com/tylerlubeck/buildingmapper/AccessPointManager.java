@@ -7,6 +7,7 @@ import android.content.IntentFilter;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.util.Log;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -34,10 +35,13 @@ public class AccessPointManager {
     int location_id;
     Context context;
     FloorMapImage FImage;
+    Context global_ctx;
+    BroadcastReceiver bcastReceiver;
 
     AccessPointManager(Context context, int _num_polls, boolean upload, int id, FloorMapImage FImage) {
         this.FImage = FImage;
         this.context = context;
+        this.global_ctx = context;
         this.location_id = id;
         this.upload = upload;
         this.points = new ArrayList<AccessPoint>();
@@ -46,7 +50,8 @@ public class AccessPointManager {
         this.num_polls = _num_polls;
         this.last_scan = new Date();
         this.MAC_Aggregator = new HashMap<String, ArrayList<Integer>>();
-        context.registerReceiver(new WifiScanReceived(), new IntentFilter(wifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
+        this.bcastReceiver = new WifiScanReceived();
+        context.registerReceiver(this.bcastReceiver, new IntentFilter(wifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
         this.wifiManager.startScan();
     }
 
@@ -67,13 +72,12 @@ public class AccessPointManager {
         }
 
         double variance = 0;
-        for(double strength: strengths) {
+        for(int strength: strengths) {
             variance += Math.pow(strength - mean, 2);
         }
 
-        Log.d("BUILDINGMAPPER", "Variance is " + Double.toString(variance));
-
         variance /= (numberOfStrengths - 1);
+        Log.d("BUILDINGMAPPER", "Variance is " + Double.toString(variance));
         return Math.sqrt(variance);
     }
 
@@ -152,12 +156,19 @@ public class AccessPointManager {
                 Date now = new Date();
                 Log.d("BUILDINGMAPPER", Long.toString(now.getTime() - last_scan.getTime()));
                 last_scan = now;
-                Log.d("BUILDINGMAPPER", "Got wifi scan number" + num_times_called);
+                Log.d("BUILDINGMAPPER", "Got wifi scan number " + num_times_called);
                 wifiManager.startScan();
             }
-            if (num_times_called == num_polls && upload) {
-                JSONArray uploadable = averageAccessPointsMap();
-                postToServer(uploadable, location_id);
+            if (num_times_called % 5 == 0) {
+                Toast.makeText(global_ctx, "Did scan " + num_times_called, Toast.LENGTH_SHORT).show();
+            }
+            if (num_times_called == num_polls) {
+                global_ctx.unregisterReceiver(bcastReceiver);
+                if (upload) {
+                    Toast.makeText(global_ctx, num_times_called + " scans done, uploading", Toast.LENGTH_SHORT).show();
+                    JSONArray uploadable = averageAccessPointsMap();
+                    postToServer(uploadable, location_id);
+                }
             }
             num_times_called++;
         }
