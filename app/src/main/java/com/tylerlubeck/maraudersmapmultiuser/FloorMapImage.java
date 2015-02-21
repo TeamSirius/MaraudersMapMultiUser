@@ -1,7 +1,6 @@
-package com.tylerlubeck.buildingmapper;
+package com.tylerlubeck.maraudersmapmultiuser;
 
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;

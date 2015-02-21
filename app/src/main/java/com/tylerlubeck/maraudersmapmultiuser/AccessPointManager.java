@@ -1,4 +1,4 @@
-package com.tylerlubeck.buildingmapper;
+package com.tylerlubeck.maraudersmapmultiuser;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

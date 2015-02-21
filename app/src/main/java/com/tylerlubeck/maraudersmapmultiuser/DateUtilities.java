@@ -1,4 +1,4 @@
-package com.tylerlubeck.buildingmapper;
+package com.tylerlubeck.maraudersmapmultiuser;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;

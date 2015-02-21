@@ -1,8 +1,7 @@
-package com.tylerlubeck.buildingmapper;
+package com.tylerlubeck.maraudersmapmultiuser;
 
 import android.app.Activity;
 import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;

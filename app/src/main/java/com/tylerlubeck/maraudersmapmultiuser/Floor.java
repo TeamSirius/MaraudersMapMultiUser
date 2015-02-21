@@ -1,4 +1,4 @@
-package com.tylerlubeck.buildingmapper;
+package com.tylerlubeck.maraudersmapmultiuser;
 
 import org.json.JSONException;
 import org.json.JSONObject;

@@ -26,7 +26,7 @@ repositories {
 
 
     defaultConfig {
-        applicationId "com.tylerlubeck.buildingmapper"
+        applicationId "com.tylerlubeck.maraudersmapmultiuser"
         minSdkVersion 15
         targetSdkVersion 15
         versionCode 1
