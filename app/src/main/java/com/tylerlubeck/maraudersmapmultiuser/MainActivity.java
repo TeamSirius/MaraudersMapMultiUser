@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import com.crashlytics.android.Crashlytics;
+import io.fabric.sdk.android.Fabric;
 
 /**
  * Created by Tyler on 2/20/2015.
@@ -18,6 +20,7 @@ public class MainActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Fabric.with(this, new Crashlytics());
         setContentView(R.layout.basic_layout);
 
         if (findViewById(R.id.fragment_container) != null) {
@@ -63,11 +66,19 @@ public class MainActivity extends Activity {
             case R.id.action_settings:
                 PrefsFragment prefsFragment = new PrefsFragment();
                 prefsFragment.setArguments(getIntent().getExtras());
-                FragmentManager fragmentManager = getFragmentManager();
                 getFragmentManager().beginTransaction()
                         .replace(R.id.fragment_container, prefsFragment)
                         .addToBackStack(null)
                         .commit();
+                break;
+            case R.id.facebook_login_setting:
+                FacebookLoginFragment facebookLoginFragment = new FacebookLoginFragment();
+                facebookLoginFragment.setArguments(getIntent().getExtras());
+                getFragmentManager().beginTransaction()
+                        .replace(R.id.fragment_container, facebookLoginFragment)
+                        .addToBackStack(null)
+                        .commit();
+                break;
         }
 
         return id == R.id.action_settings || super.onOptionsItemSelected(item);

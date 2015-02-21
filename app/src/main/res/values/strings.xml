@@ -17,5 +17,6 @@
     <string name="username_summary">Your username for the Django server</string>
     <string name="password">Password</string>
     <string name="password_summary">Your password for the Django Server</string>
+    <string name="login_with_facebook">Login With Facebook</string>
 
 </resources>

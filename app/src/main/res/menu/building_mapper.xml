@@ -5,4 +5,7 @@
         android:title="@string/action_settings"
         android:orderInCategory="100"
         android:showAsAction="never" />
+    <item android:id="@+id/facebook_login_setting"
+        android:title="@string/login_with_facebook"
+        android:orderInCategory="50"/>
 </menu>
