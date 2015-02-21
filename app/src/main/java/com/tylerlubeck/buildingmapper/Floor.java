@@ -4,43 +4,52 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * Created by Tyler on 10/28/2014.
+ * Created by Tyler Lubeck on 10/28/2014.
  */
-public class Floor {
-    private String building;
-    private int floor;
 
-    Floor(String _building, int _floor) {
-        this.building = _building;
-        this.floor = _floor;
+/**
+ * A class to represent a Floor
+ */
+class Floor {
+    private String building_name;
+    private int floor_number;
+    private String resource_uri;
+
+    Floor(String _building_name, int _floor_number) {
+        this.building_name = _building_name;
+        this.floor_number = _floor_number;
+        this.resource_uri = "";
     }
 
-    Floor(JSONObject obj) {
+    /**
+     * Builds a floor from a JSON Blob
+     * @param jsonRepresentation    A JSON Object that represents a Floor.
+     *                                 Needs to have "building_name", "floor_number", and
+     *                                  "resource_uri"
+     */
+    Floor(JSONObject jsonRepresentation) {
         try {
-            this.building = obj.getString("building");
-            this.floor = obj.getInt("floor");
+            this.building_name = jsonRepresentation.getString("building_name");
+            this.floor_number = jsonRepresentation.getInt("floor_number");
+            this.resource_uri = jsonRepresentation.getString("resource_uri");
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
     public String toString() {
-        return String.format("%s Floor %d", this.building, this.floor);
+        return String.format("%s Floor %d", this.building_name, this.floor_number);
+    }
+
+    public String getResourceUri() {
+        return this.resource_uri;
     }
 
     public int getFloor() {
-        return floor;
-    }
-
-    public void setFloor(int floor) {
-        this.floor = floor;
+        return this.floor_number;
     }
 
     public String getBuilding() {
-        return building;
-    }
-
-    public void setBuilding(String building) {
-        this.building = building;
+        return this.building_name;
     }
 }

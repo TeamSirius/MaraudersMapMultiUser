@@ -1,90 +1,131 @@
 package com.tylerlubeck.buildingmapper;
 
 
-import java.io.File;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.BitmapFactory;
 import android.graphics.Paint;
 import android.graphics.Color;
 import android.graphics.Canvas;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import android.util.Log;
-import android.widget.Spinner;
 
 /**
  * Created by Hunter on 10/11/14.
  *
- * File var??
  */
-public class FloorMapImage  extends Activity implements AdapterView.OnItemSelectedListener{
-    private File file_path;
-    private Context ctx;
-    private int w,h,original_w,original_h;
-    private int radius, pt_x, pt_y;
-    private Bitmap unmarked;
-    private ImageView image;
+public class FloorMapImage implements AdapterView.OnItemSelectedListener {
+    private final int width;
+    private final int height;
+    private int original_width;
+    private int original_height;
+    private final int point_radius;
+    private Bitmap unmarked_image;
+    private final ImageView image_view;
+    private final Context context;
 
-    FloorMapImage(String building, int floorNum, ImageView _image, Context _ctx){
-        image = _image;
-        w = 1200;
-        h = 800;
-        radius = 10;
-        ctx = _ctx;
-        pt_x = -1;
-        pt_y = -1;
-        String file_path = building.toLowerCase() + String.valueOf(floorNum);
-        image.setImageResource(ctx.getResources().getIdentifier(file_path , "drawable", ctx.getPackageName()));
-        Bitmap Floorbitmap = ((BitmapDrawable)image.getDrawable()).getBitmap();
-        original_h = Floorbitmap.getHeight();
-        original_w = Floorbitmap.getWidth();
-        unmarked = Bitmap.createScaledBitmap(Floorbitmap, w, h, true);
-        image.setImageBitmap(unmarked);
+    private final int DEFAULT_WIDTH = 1200;
+    private final int DEFAULT_HEIGHT = 800;
+    private final int DEFAULT_POINT_RADIUS = 10;
+
+
+    /**
+     * Create a class to represent a FloorMapImage.
+     *      This will fetch the correct image from the drawables folder based on the building name and floor number.
+     *      It will scale the image based on a screen size of 1200x800.
+     *      It handles drawing points on the image
+     * @param building_name     The name of the building this image_view represents
+     * @param floor_number      The floor of the building this represents
+     * @param image_view        The View to put the image on
+     * @param context           The context the image_view belongs to
+     */
+    FloorMapImage(String building_name, int floor_number, ImageView image_view, Context context){
+        /* TODO: Eventually calculate these based on screen size */
+        this.width = DEFAULT_WIDTH;
+        this.height = DEFAULT_HEIGHT;
+        this.point_radius = DEFAULT_POINT_RADIUS;
+        this.image_view = image_view;
+        this.context = context;
+        this.setImage(building_name, floor_number);
     }
 
-    void draw_point(int x, int y){
-        Log.d("DRAWING AT:",Integer.toString(x) + ":" + Integer.toString(y));
-        Bitmap bmp = unmarked.copy(unmarked.getConfig(), true);
-        if(x >= 0 && y >= 0 ) {
-            float scaled_x = x * (float) w / (float) original_w;
-            float scaled_y = y * (float) h / (float) original_h;
+    /**
+     * Sets the image in the image view, and repopulates the other images
+     * @param building_name     The string name of the building
+     * @param floor_number      The floor number of the building
+     */
+    void setImage(String building_name, int floor_number) {
+        String file_path = building_name.toLowerCase().replaceAll(" ", "_").replaceAll("/", "") + String.valueOf(floor_number);
 
-            Paint paint = new Paint();
-            paint.setColor(Color.RED);
-            Canvas canvas = new Canvas(bmp);
-            canvas.drawCircle(scaled_x, scaled_y, radius, paint);
-        }
-        image.setImageBitmap(bmp);
+        this.image_view.setImageResource(this.context.getResources().getIdentifier(file_path ,
+                "drawable",
+                this.context.getPackageName()));
+        Bitmap Floorbitmap = ((BitmapDrawable) this.image_view.getDrawable()).getBitmap();
+        this.original_height = Floorbitmap.getHeight();
+        this.original_width = Floorbitmap.getWidth();
+        this.unmarked_image = Bitmap.createScaledBitmap(Floorbitmap,
+                this.width,
+                this.height,
+                true);
+        this.image_view.setImageBitmap(this.unmarked_image);
     }
 
+    /**
+     *  Draws a point on the image_view at (x, y)
+     *  Clears all other points drawn on the image_view
+     * @param x     The x coordinate to draw at
+     * @param y     The y coordinate to draw at
+     */
+    void draw_point_clear(int x, int y){
+        Log.d("BUILDINGMAPPER", String.format("%b", this.unmarked_image == null));
+        Bitmap bitmap = this.unmarked_image.copy(this.unmarked_image.getConfig(),
+                                                true);
+        this.draw_point(x, y, bitmap);
+    }
+
+    /**
+     *  Draws a point on the image_view at (x, y)
+     *  Does not clear the image_view before drawing
+     * @param x     The x coordinate to draw at
+     * @param y     The y coordinate to draw at
+     */
     void draw_point_noclear(int x, int y){
-        Log.d("DRAWING AT:",Integer.toString(x) + ":" + Integer.toString(y));
-        Bitmap bmp = ((BitmapDrawable)image.getDrawable()).getBitmap();
-        if(x >= 0 && y >= 0 ) {
-            float scaled_x = x * (float) w / (float) original_w;
-            float scaled_y = y * (float) h / (float) original_h;
+        Bitmap bitmap = ((BitmapDrawable)this.image_view.getDrawable()).getBitmap();
+        this.draw_point(x, y, bitmap);
+    }
+
+    /**
+     * Draws a point on the given bitmap, and sets the image_view to display the updated bitmap
+     * @param x         The x coordinate to draw at
+     * @param y         The y coordinate to draw at
+     * @param bitmap    The bitmap to draw on
+     */
+    private void draw_point(int x, int y, Bitmap bitmap) {
+        if ( x >= 0 && y >= 0) {
+            float scaled_x = x * (float) this.width / (float) this.original_width;
+            float scaled_y = y * (float) this.height / (float) this.original_height;
+            Log.d("BUILDINGMAPPER", String.format("(%d, %d) -> (%f, %f)", x, y, scaled_x, scaled_y));
+            Log.d("BUILDINGMAPPER", String.format("%d x %d", this.original_width, this.original_height));
             Paint paint = new Paint();
             paint.setColor(Color.BLUE);
-            Canvas canvas = new Canvas(bmp);
-            canvas.drawCircle(scaled_x, scaled_y, radius, paint);
+            Canvas canvas = new Canvas(bitmap);
+            canvas.drawCircle(scaled_x, scaled_y, this.point_radius, paint);
+            this.image_view.setImageBitmap(bitmap);
         }
-        image.setImageBitmap(bmp);
     }
 
     @Override
-    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-        Location loc = (Location) adapterView.getItemAtPosition(i);
-        draw_point(loc.x,loc.y);
+    public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
+        Location location = (Location) adapterView.getItemAtPosition(position);
+        this.draw_point_clear(location.getX_coordinate(), location.getY_coordinate());
     }
 
     @Override
     public void onNothingSelected(AdapterView<?> adapterView) {
-        Log.d("FLOOR", "NOTHING SELECTED");
-        draw_point(-1,-1);
+        Bitmap bitmap = this.unmarked_image.copy(this.unmarked_image.getConfig(), true);
+        this.image_view.setImageBitmap(bitmap);
     }
 }
