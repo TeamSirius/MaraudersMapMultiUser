@@ -10,12 +10,25 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.facebook.HttpMethod;
+import com.facebook.LoggingBehavior;
+import com.facebook.Request;
+import com.facebook.Response;
 import com.facebook.Session;
+import com.facebook.SessionLoginBehavior;
 import com.facebook.SessionState;
+import com.facebook.Settings;
 import com.facebook.UiLifecycleHelper;
 import com.facebook.model.GraphUser;
 import com.facebook.widget.LoginButton;
+
+import org.apache.http.message.BasicNameValuePair;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Created by Tyler on 2/21/2015.
@@ -27,6 +40,7 @@ public class FacebookLoginFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        super.onCreateView(inflater, container, savedInstanceState);
         LinearLayout linearLayout = (LinearLayout) inflater.inflate(R.layout.facebook_login,
                                                                     container,
                                                                     false);
@@ -35,28 +49,41 @@ public class FacebookLoginFragment extends Fragment {
         username = (TextView) linearLayout.findViewById(R.id.username);
         uiHelper = new UiLifecycleHelper(this.getActivity(), this.statusCallback);
 
-        loginButton.setUserInfoChangedCallback(new LoginButton.UserInfoChangedCallback() {
-            @Override
-            public void onUserInfoFetched(GraphUser graphUser) {
-                if (graphUser != null) {
-                    username.setText("You are currently logged in as " + graphUser.getName());
-                } else {
-                    username.setText("You are not logged in");
-                }
-            }
-        });
+        loginButton.setFragment(new NativeFragmentWrapper(this));
+        loginButton.setReadPermissions(Arrays.asList("user_friends"));
+        loginButton.setUserInfoChangedCallback(this.userInfoChangedCallback);
+
+        uiHelper.onCreate(savedInstanceState);
 
         return linearLayout;
     }
+
+    private LoginButton.UserInfoChangedCallback userInfoChangedCallback = new LoginButton.UserInfoChangedCallback() {
+
+        @Override
+        public void onUserInfoFetched(GraphUser graphUser) {
+            if (graphUser != null) {
+                username.setText("You are currently logged in as " + graphUser.getName());
+                //getFragmentManager().popBackStack();
+            } else {
+                username.setText("You are not logged in");
+            }
+        }
+    };
 
     private Session.StatusCallback statusCallback = new Session.StatusCallback() {
 
         @Override
         public void call(Session session, SessionState sessionState, Exception e) {
             if (sessionState.isOpened()) {
-                Log.d("MARAUDERSMAP", "Facebook session opened");
+                List<BasicNameValuePair> params = new ArrayList<BasicNameValuePair>();
+                params.add(new BasicNameValuePair("access_token", session.getAccessToken()));
+
+                new CreateUserAsyncTask(getActivity(),
+                                        getString(R.string.account_creation_endpoint),
+                                        params).execute();
+
             } else if (sessionState.isClosed()) {
-                Log.d("MARAUDERSMAP", "Facebook session closed");
             }
         }
     };
