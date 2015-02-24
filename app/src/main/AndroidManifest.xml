@@ -39,6 +39,8 @@
                 <category android:name="com.tylerlubeck.maraudersmapmultiuser"/>
             </intent-filter>
         </receiver>
+        
+        <receiver android:name=".GcmIntentService$replyButtonListener" />
 
         <service android:name=".GcmIntentService"/>
     </application>

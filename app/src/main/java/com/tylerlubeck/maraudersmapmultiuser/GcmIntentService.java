@@ -1,15 +1,20 @@
 package com.tylerlubeck.maraudersmapmultiuser;
 
 import android.app.IntentService;
-import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
+import android.util.Log;
+import android.widget.Toast;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * Created by Tyler on 2/23/2015.
@@ -32,33 +37,56 @@ public class GcmIntentService extends IntentService {
 
         if (!extras.isEmpty()) {
             if (GoogleCloudMessaging.MESSAGE_TYPE_SEND_ERROR.equals(messageType)) {
-                sendNotification("Send error: " + extras.toString());
+                Log.d("MARAUDERSMAP", "Send error: " + extras.toString());
             } else if (GoogleCloudMessaging.MESSAGE_TYPE_DELETED.equals(messageType)) {
-                sendNotification("Deleted messages on server: " + extras.toString());
+                Log.d("MARAUDERSMAP", "Deleted messages on server: " + extras.toString());
             } else if (GoogleCloudMessaging.MESSAGE_TYPE_MESSAGE.equals(messageType)) {
-                sendNotification("Received: " + extras.toString());
+                dispatchNotifications(extras.getString("msg"));
             }
         }
 
         GcmBroadcastReceiver.completeWakefulIntent(intent);
     }
 
-    private void sendNotification(String msg) {
-        notificationManager = (NotificationManager)this.getSystemService(Context.NOTIFICATION_SERVICE);
-        PendingIntent contentIntent = PendingIntent.getActivity(this,
-                                                                0,
-                                                                new Intent(this, MainActivity.class),
-                                                                0);
+    private void dispatchNotifications (String msg) {
+        try {
+            JSONObject object = new JSONObject(msg);
+            String type = object.getString("type");
+            if (type.equals("request_location")) {
+                requestLocationNotification(object);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
 
-        Notification.Builder builder = new Notification.Builder(this);
+    private void requestLocationNotification(JSONObject msg) {
+        try {
+            String requestor_name = msg.getString("requestor");
+            notificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
+            Intent replyIntent = new Intent(this, replyButtonListener.class);
+            PendingIntent pendingReplyIntent = PendingIntent.getBroadcast(this,
+                    0,
+                    replyIntent,
+                    0);
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
+                    .setSmallIcon(R.drawable.ic_launcher)
+                    .setContentTitle("WHERE YOU AT")
+                    .setContentText(String.format("%s wants to know where you are", requestor_name))
+                    .addAction(R.drawable.ic_launcher, "Reply", pendingReplyIntent);
+            notificationManager.notify(1, builder.build());
 
-        builder.setSmallIcon(R.drawable.ic_launcher)
-               .setContentTitle("SUCCESSFUL MESSAGE")
-               .setContentText(msg);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
 
-        Notification notification = builder.getNotification();
-        notificationManager.notify(NOTIFICATION_ID, notification);
+    public static class replyButtonListener extends BroadcastReceiver {
 
-
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.d("MARAUDERSMAP", "NEED TO REPLY");
+            Toast.makeText(context, "REPLYING", Toast.LENGTH_LONG).show();
+        }
     }
 }
