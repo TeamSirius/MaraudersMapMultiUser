@@ -20,5 +20,7 @@
     <string name="login_with_facebook">Login With Facebook</string>
     <string name="account_creation_endpoint">http://sirius-multi-user.herokuapp.com/register-by-token/facebook/</string>
     <string name="device_registraion_endpoint">http://sirius-multi-user.herokuapp.com/api/v1/device/register/</string>
+    <string name="find_a_friend">Find a Friend</string>
+    <string name="get_friend_location_endpoint">http://sirius-multi-user.herokuapp.com/request_location/</string>
 
 </resources>

@@ -59,6 +59,7 @@ abstract class GenericGETTask extends AsyncTask<Void, Void, String> {
         Crashlytics.log(this.url);
     }
 
+
     /**
      * If everything works, return the response string. Otherwise, set the responseException.
      * @param voids     Because we don't need any arguments

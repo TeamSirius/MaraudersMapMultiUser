@@ -2,7 +2,9 @@ package com.tylerlubeck.maraudersmapmultiuser;
 
 import android.app.Fragment;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -78,6 +80,10 @@ public class FacebookLoginFragment extends Fragment {
             if (sessionState.isOpened()) {
                 List<BasicNameValuePair> params = new ArrayList<BasicNameValuePair>();
                 params.add(new BasicNameValuePair("access_token", session.getAccessToken()));
+                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+                SharedPreferences.Editor editor = preferences.edit();
+                editor.putString("facebook_token", session.getAccessToken());
+                editor.commit();
 
                 new CreateUserAsyncTask(getActivity(),
                                         getString(R.string.account_creation_endpoint),
