@@ -31,7 +31,6 @@
         <meta-data
             android:name="com.crashlytics.ApiKey"
             android:value="8348a8b16599c4a043ba869008083e00a3d00efe" />
-        <!--
 
         <receiver android:name=".GcmBroadcastReceiver"
             android:permission="com.google.android.c2dm.permission.SEND">
@@ -42,7 +41,6 @@
         </receiver>
 
         <service android:name=".GcmIntentService"/>
-        -->
     </application>
 
 </manifest>
