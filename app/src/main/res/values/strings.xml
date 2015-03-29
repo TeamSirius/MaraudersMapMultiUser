@@ -19,7 +19,8 @@
     <string name="password_summary">Your password for the Django Server</string>
     <string name="login_with_facebook">Login With Facebook</string>
     <string name="account_creation_endpoint">http://sirius-multi-user.herokuapp.com/register-by-token/facebook/</string>
-    <string name="device_registraion_endpoint">http://sirius-multi-user.herokuapp.com/api/v1/device/register/</string>
+    <string name="device_registration_endpoint">http://sirius-multi-user.herokuapp.com/api/v1/device/register/</string>
+    <string name="respond_to_request_endpoint">http://sirius-multi-user.herokuapp.com/api/v1/user_location/respond/</string>
     <string name="find_a_friend">Find a Friend</string>
     <string name="get_friend_location_endpoint">http://sirius-multi-user.herokuapp.com/api/v1/user_location/friend/</string>
     <string name="title_activity_navigation">Marauder\'s Map</string>

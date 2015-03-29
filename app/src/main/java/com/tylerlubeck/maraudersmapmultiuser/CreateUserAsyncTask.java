@@ -7,7 +7,6 @@ import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
@@ -151,7 +150,7 @@ public class CreateUserAsyncTask extends GenericGETTask {
             JSONObject object = new JSONObject();
             object.put("reg_id", regid);
             object.put("dev_id", username);
-            new RegisterDeviceAsyncTask(this.context.getString(R.string.device_registraion_endpoint),
+            new RegisterDeviceAsyncTask(this.context.getString(R.string.device_registration_endpoint),
                                         object,
                                         username,
                                         api_key).execute();

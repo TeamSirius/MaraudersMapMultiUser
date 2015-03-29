@@ -23,6 +23,9 @@ import com.google.android.gms.plus.model.people.Person;
 
 import io.fabric.sdk.android.Fabric;
 import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,19 +35,18 @@ public class BuildingMapperFragment extends Fragment {
 
     private Spinner point_picker;
     private FloorMapImage floor_image;
-    private RelativeLayout relativeLayout;
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Fabric.with(this.getActivity(), new Crashlytics());
-        this.relativeLayout = (RelativeLayout) inflater.inflate(R.layout.activity_building_mapper,
+        RelativeLayout relativeLayout = (RelativeLayout) inflater.inflate(R.layout.activity_building_mapper,
                 container,
                 false);
-        ImageView imageView = (ImageView) this.relativeLayout.findViewById(R.id.floorImage);
+        ImageView imageView = (ImageView) relativeLayout.findViewById(R.id.floorImage);
         this.floor_image = new FloorMapImage(imageView, this.getActivity());
         this.getLocation();
-        return this.relativeLayout;
+        return relativeLayout;
     }
 
     /**
@@ -77,7 +79,28 @@ public class BuildingMapperFragment extends Fragment {
         Toast.makeText(this.getActivity(),
                 String.format("About to do %d scans", AccessPointManager.NUM_QUERY_POLLS),
                 Toast.LENGTH_LONG).show();
-        new AccessPointManager(this.getActivity(),
-                this.floor_image);
+        new AccessPointManager(this.getActivity()) {
+            @Override
+            protected void allDataReceived(JSONArray accessPointData) {
+                String url = getActivity().getString(R.string.locate_me_endpoint);
+                JSONObject data = new JSONObject();
+                try {
+                    Log.e("MARAUDERSMAP", "Posting my location: ");
+                    data.put("access_points", accessPointData);
+                    SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+                    String api_key = preferences.getString("api_key", "");
+                    String facebook_username = preferences.getString("facebook_username", "");
+                    PostMyLocationAsyncTask postMyLocationAsyncTask = new PostMyLocationAsyncTask(url,
+                            data,
+                            floor_image,
+                            facebook_username,
+                            api_key,
+                            getActivity());
+                    postMyLocationAsyncTask.execute();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
     }
 }

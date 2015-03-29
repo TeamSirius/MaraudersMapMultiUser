@@ -24,7 +24,10 @@ import java.util.Map;
  * Created by brettfischler on 10/11/14.
  * Edited by Tyler Lubeck on 2/16/15
  */
-public class AccessPointManager {
+public abstract class AccessPointManager {
+
+    protected abstract void allDataReceived(JSONArray accessPointData);
+
     private enum UploadType {
         UPLOAD,
         QUERY
@@ -54,7 +57,8 @@ public class AccessPointManager {
      */
     AccessPointManager(Context _context, FloorMapImage _floor_image, String _location_uri,
                        String username, String password) {
-        this.instantiate(_context, this.NUM_MAPPING_POLLS, _floor_image, username, password);
+        this.instantiate(_context, this.NUM_MAPPING_POLLS, username, password);
+        this.floor_image = _floor_image;
         this.location_uri = _location_uri;
         this.uploadType = UploadType.UPLOAD;
         this.wifiManager.startScan();
@@ -63,10 +67,9 @@ public class AccessPointManager {
     /**
      * Create an AccessPointManager that allows for uploading the access points to the related location
      * @param _context          The context to operate with
-     * @param _floor_image      The FloorImage to display where you are on
      */
-    AccessPointManager(Context _context, FloorMapImage _floor_image) {
-        this.instantiate(_context, this.NUM_QUERY_POLLS, _floor_image, username, password);
+    AccessPointManager(Context _context) {
+        this.instantiate(_context, this.NUM_QUERY_POLLS, username, password);
         this.uploadType = UploadType.QUERY;
         this.wifiManager.startScan();
     }
@@ -76,15 +79,12 @@ public class AccessPointManager {
      *      We have to do it this way and not with a private constructor so that we can set the
      *      uploadType and not have a race condition with starting the wifi scan
      * @param _context          The context to operate with
-     * @param _floor_image      The FloorImage to display where you are on
      * @param username          The username to authenticate with
      * @param password          The password to authenticate with
      */
-    private void instantiate(Context _context, int _num_polls, FloorMapImage _floor_image,
-                             String username, String password) {
+    private void instantiate(Context _context, int _num_polls, String username, String password) {
         this.username = username;
         this.password = password;
-        this.floor_image = _floor_image;
         this.context = _context;
         this.num_polls = _num_polls;
         this.wifiManager = (WifiManager)this.context.getSystemService(Context.WIFI_SERVICE);
@@ -209,24 +209,6 @@ public class AccessPointManager {
      * @param accessPointData   The JSONArray of Access Point Information
      */
     void findMyPosition(JSONArray accessPointData) {
-        String url = this.context.getString(R.string.locate_me_endpoint);
-        JSONObject data = new JSONObject();
-        try {
-            Log.e("MARAUDERSMAP", "Posting my location: ");
-            data.put("access_points", accessPointData);
-            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this.context);
-            String api_key = preferences.getString("api_key", "");
-            String facebook_username = preferences.getString("facebook_username", "");
-            PostMyLocationAsyncTask postMyLocationAsyncTask = new PostMyLocationAsyncTask(url,
-                                                                                          data,
-                                                                                          this.floor_image,
-                                                                                          facebook_username,
-                                                                                          api_key,
-                                                                                          this.context);
-            postMyLocationAsyncTask.execute();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
     }
 
     /**
@@ -264,7 +246,7 @@ public class AccessPointManager {
                     uploadNewPoints(uploadable);
                 } else if (outerAPM.uploadType == UploadType.QUERY) {
                     /* Use the seen points to compute our location */
-                    findMyPosition(uploadable);
+                    allDataReceived(uploadable);
                 }
             }
             outerAPM.num_times_called++;
