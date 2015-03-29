@@ -20,7 +20,7 @@ import org.json.JSONObject;
  * An implementation of the GenericGETTask class.
  *  This implementation is to retrieve Floor objects from the server
  */
-class PostMyLocationAsyncTask extends GenericPOSTTask {
+class PostMyLocationAsyncTask extends GenericPOSTAPIKeyTask {
 
 
     private final FloorMapImage floor_image;

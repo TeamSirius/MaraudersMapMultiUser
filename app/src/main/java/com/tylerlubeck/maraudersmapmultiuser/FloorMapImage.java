@@ -52,6 +52,19 @@ public class FloorMapImage implements AdapterView.OnItemSelectedListener {
     }
 
     /**
+     * Instantiate a FloorMapImage based on a blank image view, with the image itself to be filled in later.
+     * @param image_view
+     * @param context
+     */
+    FloorMapImage(ImageView image_view, Context context) {
+        this.width = DEFAULT_WIDTH;
+        this.height = DEFAULT_HEIGHT;
+        this.point_radius = DEFAULT_POINT_RADIUS;
+        this.image_view = image_view;
+        this.context = context;
+    }
+
+    /**
      * Sets the image in the image view, and repopulates the other images
      * @param building_name     The string name of the building
      * @param floor_number      The floor number of the building

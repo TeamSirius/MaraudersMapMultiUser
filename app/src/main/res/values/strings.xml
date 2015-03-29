@@ -9,7 +9,7 @@
     <string name="location_endpoint">http://sirius-multi-user.herokuapp.com/api/v1/location/</string>
     <string name="floor_endpoint">http://sirius-multi-user.herokuapp.com/api/v1/floor/</string>
     <string name="accesspoint_endpoint">http://sirius-multi-user.herokuapp.com/api/v1/accesspoint/</string>
-    <string name="locate_me_endpoint">http://sirius-multi-user.herokuapp.com/api/v1/locateme/</string>
+    <string name="locate_me_endpoint">http://sirius-multi-user.herokuapp.com/api/v1/user_location/me/</string>
     <string name="where_am_i_btn_txt">Where Am I</string>
     <string name="solemnly_swear">I Solemnly Swear&#8230;</string>
     <string name="login_information">Login Information</string>

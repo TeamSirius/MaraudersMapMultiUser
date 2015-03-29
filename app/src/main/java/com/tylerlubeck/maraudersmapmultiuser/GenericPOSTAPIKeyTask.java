@@ -63,8 +63,6 @@ public abstract class GenericPOSTAPIKeyTask extends AsyncTask<Void, Void, String
         this.password = password;
 
         Uri.Builder uri_builder = Uri.parse(_url).buildUpon();
-        uri_builder.appendQueryParameter("username", username);
-        uri_builder.appendQueryParameter("api_key", password);
 
 
         this.url = uri_builder.build().toString();
@@ -114,6 +112,7 @@ public abstract class GenericPOSTAPIKeyTask extends AsyncTask<Void, Void, String
             }
             http_post.setHeader("Accept", "application/json");
             http_post.setHeader("Content-type", "application/json");
+            http_post.setHeader("Authorization", String.format("ApiKey %s:%s", this.username, this.password));
 
             http_response = http_client.execute(http_post);
             response_string = new BasicResponseHandler().handleResponse(http_response);

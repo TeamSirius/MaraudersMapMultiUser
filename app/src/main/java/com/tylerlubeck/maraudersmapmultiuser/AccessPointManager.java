@@ -4,8 +4,11 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
+import android.preference.PreferenceManager;
+import android.util.Log;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -61,11 +64,8 @@ public class AccessPointManager {
      * Create an AccessPointManager that allows for uploading the access points to the related location
      * @param _context          The context to operate with
      * @param _floor_image      The FloorImage to display where you are on
-     * @param username          The username to authenticate with
-     * @param password          The password to authenticate with
      */
-    AccessPointManager(Context _context, FloorMapImage _floor_image,
-                       String username, String password) {
+    AccessPointManager(Context _context, FloorMapImage _floor_image) {
         this.instantiate(_context, this.NUM_QUERY_POLLS, _floor_image, username, password);
         this.uploadType = UploadType.QUERY;
         this.wifiManager.startScan();
@@ -212,12 +212,16 @@ public class AccessPointManager {
         String url = this.context.getString(R.string.locate_me_endpoint);
         JSONObject data = new JSONObject();
         try {
-            data.put("objects", accessPointData);
+            Log.e("MARAUDERSMAP", "Posting my location: ");
+            data.put("access_points", accessPointData);
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this.context);
+            String api_key = preferences.getString("api_key", "");
+            String facebook_username = preferences.getString("facebook_username", "");
             PostMyLocationAsyncTask postMyLocationAsyncTask = new PostMyLocationAsyncTask(url,
                                                                                           data,
                                                                                           this.floor_image,
-                                                                                          this.username,
-                                                                                          this.password,
+                                                                                          facebook_username,
+                                                                                          api_key,
                                                                                           this.context);
             postMyLocationAsyncTask.execute();
         } catch (JSONException e) {
