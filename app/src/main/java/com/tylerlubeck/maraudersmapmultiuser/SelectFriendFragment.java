@@ -10,20 +10,16 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.facebook.AccessToken;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
 import com.facebook.HttpMethod;
-import com.facebook.Request;
-import com.facebook.Response;
-import com.facebook.Session;
-import com.facebook.android.Facebook;
-import com.facebook.model.GraphObject;
 
-import org.apache.http.message.BasicNameValuePair;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by Tyler on 2/23/2015.
@@ -33,62 +29,58 @@ public class SelectFriendFragment extends ListFragment {
     ArrayList<FacebookFriend> friendsList;
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
+        this.friendsList = new ArrayList<FacebookFriend>();
         super.onActivityCreated(savedInstanceState);
+        this.fillList();
+    }
 
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        String facebook_token = preferences.getString("facebook_token", "");
-        if (facebook_token.isEmpty()) {
-            Log.d("MARAUDERSMAP", "No Facebook Token");
-            return;
-        }
-        //Session session = Session.openActiveSessionWithAccessToken(getActivity(), AccessToken.createFromExistingAccessToken(facebook_token, null, null, null, null), null);
-        Session session = Session.getActiveSession();
-
-        if (session == null || ! session.isOpened()) {
-            Log.d("MARAUDERSMAP", "Session not open");
-            return;
-        }
-
-        new Request(session,
-                "/me/friends",
-                null,
-                HttpMethod.GET,
-                new Request.Callback(){
-
+    private void fillList() {
+        AccessToken accessToken = AccessToken.getCurrentAccessToken();
+        if (accessToken == null) Log.d("MARAUDERSMAP", "ACCESS TOKEN IS NULL, MAKING REQUEST");
+        GraphRequest request = GraphRequest.newMyFriendsRequest(accessToken,
+                new GraphRequest.GraphJSONArrayCallback() {
                     @Override
-                    public void onCompleted(Response response) {
-                        GraphObject responseGraph = response.getGraphObject();
-                        JSONObject object = responseGraph.getInnerJSONObject();
-                        friendsList = new ArrayList<FacebookFriend>();
-                        try {
-                            JSONArray friends = object.getJSONArray("data");
-                            int friends_length = friends.length();
-                            for(int i = 0; i < friends_length; i++) {
-                                Log.d("MARAUDERSMAP", String.format("%s: %s", friends.getJSONObject(i).getString("name"), friends.getJSONObject(i).getString("id")));
-                                friendsList.add(new FacebookFriend(friends.getJSONObject(i)));
+                    public void onCompleted(JSONArray jsonArray, GraphResponse graphResponse) {
+                        int numFriends = jsonArray.length();
+                        Log.d("MARAUDERSMAP", "YOU HAVE THIS MANY FRIENDS: " + Integer.toString(numFriends));
+                        for(int i = 0; i < numFriends; i++){
+                            try {
+                                FacebookFriend friend = new FacebookFriend(jsonArray.getJSONObject(i));
+                                SelectFriendFragment.this.friendsList.add(friend);
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
                             }
-
-                            Log.d("MARAUDERSMAP", String.format("Found %d friends", friends_length));
-
-                            SelectFriendsArrayAdapter friendsArrayAdapter = new SelectFriendsArrayAdapter(getActivity(), friendsList);
-                            setListAdapter(friendsArrayAdapter);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
                         }
-
+                        SelectFriendsArrayAdapter friendsArrayAdapter = new SelectFriendsArrayAdapter(getActivity(), friendsList);
+                        SelectFriendFragment.this.setListAdapter(friendsArrayAdapter);
                     }
-                }).executeAsync();
+                }
+        );
+
+        request.executeAsync();
     }
 
     @Override
     public void onListItemClick(ListView listView, View view, int position, long id) {
         FacebookFriend fbFriend = friendsList.get(position);
         Toast.makeText(this.getActivity(), "Selected Friend: " + fbFriend.getName(), Toast.LENGTH_LONG).show();
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        String username = preferences.getString("facebook_username", "");
+        String api_key = preferences.getString("api_key", "");
 
-        List<BasicNameValuePair> params = new ArrayList<BasicNameValuePair>();
-        params.add(new BasicNameValuePair("friend_id", fbFriend.getId()));
+        if (username.isEmpty() || api_key.isEmpty()) {
+            Log.e("MARAUDERSMAP", "Could not get a username or api key");
+        }
 
+        JSONObject data = new JSONObject();
+        try {
+            data.put("friend_fb_id", fbFriend.getId());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
         new GetFriendLocationAsyncTask(getActivity().getString(R.string.get_friend_location_endpoint),
-                                       params).execute();
+                                       data, username, api_key).execute();
+        getFragmentManager().popBackStackImmediate();
     }
 }

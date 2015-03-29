@@ -13,11 +13,11 @@ import java.util.List;
 /**
  * Created by Tyler on 2/24/2015.
  */
-public class GetFriendLocationAsyncTask extends GenericGETTask {
+public class GetFriendLocationAsyncTask extends GenericPOSTAPIKeyTask {
 
 
-    GetFriendLocationAsyncTask(String _url, List<BasicNameValuePair> _params) {
-        super(_url, _params);
+    GetFriendLocationAsyncTask(String _url, JSONObject data, String username, String api_key) {
+        super(_url, data, username, api_key);
     }
 
     @Override

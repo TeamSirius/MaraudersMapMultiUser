@@ -16,9 +16,6 @@ import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
 import com.facebook.LoggingBehavior;
-import com.facebook.Session;
-import com.facebook.Settings;
-import com.facebook.widget.UserSettingsFragment;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 
@@ -55,7 +52,6 @@ public class MainActivity extends Activity {
                 return;
             }
 
-            Session session = Session.getActiveSession();
             FragmentTransaction transaction = getFragmentManager().beginTransaction();
 
             /*
@@ -132,12 +128,7 @@ public class MainActivity extends Activity {
                         .commit();
                 break;
             case R.id.facebook_login_setting:
-                FacebookLoginFragment facebookLoginFragment = new FacebookLoginFragment();
-                facebookLoginFragment.setArguments(getIntent().getExtras());
-                getFragmentManager().beginTransaction()
-                        .replace(R.id.fragment_container, facebookLoginFragment)
-                        .addToBackStack(null)
-                        .commit();
+                Toast.makeText(this, "YOU'RE USING THE WRONG ACTIVITY. SHOULD NOT SEE THIS", Toast.LENGTH_LONG).show();
                 break;
         }
 

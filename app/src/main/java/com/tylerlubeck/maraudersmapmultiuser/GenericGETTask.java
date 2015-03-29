@@ -56,7 +56,6 @@ abstract class GenericGETTask extends AsyncTask<Void, Void, String> {
         }
         this.url = uri_builder.build().toString();
         Log.d("BUILDINGMAPPER", this.url);
-        Crashlytics.log(this.url);
     }
 
 

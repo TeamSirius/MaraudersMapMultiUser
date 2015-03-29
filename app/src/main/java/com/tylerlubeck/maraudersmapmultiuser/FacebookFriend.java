@@ -28,4 +28,8 @@ public class FacebookFriend {
     public String getId() {
         return this.id;
     }
+
+    public String toString() {
+        return String.format("%s: %s", this.name, this.id);
+    }
 }

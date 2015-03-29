@@ -21,6 +21,20 @@
     <string name="account_creation_endpoint">http://sirius-multi-user.herokuapp.com/register-by-token/facebook/</string>
     <string name="device_registraion_endpoint">http://sirius-multi-user.herokuapp.com/api/v1/device/register/</string>
     <string name="find_a_friend">Find a Friend</string>
-    <string name="get_friend_location_endpoint">http://sirius-multi-user.herokuapp.com/request_location/</string>
+    <string name="get_friend_location_endpoint">http://sirius-multi-user.herokuapp.com/api/v1/user_location/friend/</string>
+    <string name="title_activity_navigation">Marauder\'s Map</string>
+
+    <string name="title_section1">Section 1</string>
+    <string name="title_section2">Section 2</string>
+    <string name="title_section3">Section 3</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_example">Example action</string>
+    <string name="find_me">Find Me</string>
+    <string name="find_friend">Find a Friend</string>
+    <string name="logout">Logout</string>
+    <string name="title_activity_login">LoginActivity</string>
 
 </resources>

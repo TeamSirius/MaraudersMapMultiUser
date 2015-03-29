@@ -48,7 +48,8 @@ public class CreateUserAsyncTask extends GenericGETTask {
     @Override
     void processResponse(String response) {
         try {
-            SharedPreferences preferences = getSharedPreferences();
+            //SharedPreferences preferences = getSharedPreferences();
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this.appContext);
 
             JSONObject response_data = new JSONObject(response);
             String facebook_username = response_data.getString("username");
