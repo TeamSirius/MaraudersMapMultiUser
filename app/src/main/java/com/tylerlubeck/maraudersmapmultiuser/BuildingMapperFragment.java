@@ -76,9 +76,6 @@ public class BuildingMapperFragment extends Fragment {
     private void getLocation() {
         this.ensureWifiEnabled();
                 /* If trying to locate yourself, do two scans and upload it */
-        Toast.makeText(this.getActivity(),
-                String.format("About to do %d scans", AccessPointManager.NUM_QUERY_POLLS),
-                Toast.LENGTH_LONG).show();
         new AccessPointManager(this.getActivity()) {
             @Override
             protected void allDataReceived(JSONArray accessPointData) {

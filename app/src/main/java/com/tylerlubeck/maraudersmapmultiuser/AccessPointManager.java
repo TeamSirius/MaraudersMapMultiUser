@@ -235,11 +235,6 @@ public abstract class AccessPointManager {
                 outerAPM.context.unregisterReceiver(outerAPM.broadcastReceiver);
                 JSONArray uploadable = averageAccessPointsMap(outerAPM.location_uri);
 
-                Toast.makeText(outerAPM.context,
-                        outerAPM.num_times_called + " scans done, uploading",
-                        Toast.LENGTH_SHORT)
-                        .show();
-
                 /* Either do one or the other */
                 if (outerAPM.uploadType == UploadType.UPLOAD){
                     /* Upload the points and associate them with this location */

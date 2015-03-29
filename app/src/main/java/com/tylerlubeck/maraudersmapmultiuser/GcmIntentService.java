@@ -80,7 +80,7 @@ public class GcmIntentService extends IntentService {
             disallowReplyIntent.putExtra("allow", false);
             PendingIntent pendingDisallowReplyIntent = PendingIntent.getBroadcast(this,
                     0,
-                    allowReplyIntent,
+                    disallowReplyIntent,
                     0);
             NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
                     .setSmallIcon(R.drawable.ic_launcher)

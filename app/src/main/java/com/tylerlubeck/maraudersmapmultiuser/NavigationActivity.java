@@ -35,8 +35,11 @@ public class NavigationActivity extends Activity
 
     private int currentFragment;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        FacebookSdk.sdkInitialize(getApplicationContext());
+        this.forceLoginIfNecessary();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_navigation);
 
@@ -45,13 +48,14 @@ public class NavigationActivity extends Activity
         mTitle = getTitle();
 
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        mNavigationDrawerFragment.setUp(R.id.navigation_drawer, drawerLayout);
 
-        FacebookSdk.sdkInitialize(getApplicationContext());
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        this.forceLoginIfNecessary();
         this.currentFragment = -1;
         this.onNavigationDrawerItemSelected(0);
     }
@@ -87,9 +91,7 @@ public class NavigationActivity extends Activity
                         .commit();
                 break;
             case 2:
-                AccessToken accessToken = AccessToken.getCurrentAccessToken();
-                LoginManager loginManager = LoginManager.getInstance();
-                loginManager.logOut();
+                LoginManager.getInstance().logOut();
                 this.forceLoginIfNecessary();
                 break;
         }

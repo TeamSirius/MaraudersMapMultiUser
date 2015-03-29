@@ -53,15 +53,16 @@ class PostMyLocationAsyncTask extends GenericPOSTAPIKeyTask {
             int y_coordinate = json_response.getInt("y_coordinate");
             int floor_number = json_response.getInt("floor_number");
             String building_name = json_response.getString("building_name");
-            Log.d("BUILDINGMAPPER", String.format("%s %d", building_name, floor_number));
             this.floor_image.setImage(building_name, floor_number);
             this.floor_image.draw_point_clear(x_coordinate, y_coordinate);
+            /*
             String msg = String.format("You\'re on %s %d at (%d, %d)",
                                        building_name,
                                        floor_number,
                                        x_coordinate,
                                        y_coordinate);
-            makeNotification("Found you!", msg);
+           makeNotification("Found you!", msg);
+           */
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -83,11 +84,9 @@ class PostMyLocationAsyncTask extends GenericPOSTAPIKeyTask {
     void makeNotification(String title, String text){
         NotificationManager notificationManager = (NotificationManager) this.context.getSystemService(Context.NOTIFICATION_SERVICE);
 
-        long pattern[] = {500, 500, 500};
         Notification.Builder builder = new Notification.Builder(this.context)
                 .setContentTitle(title)
                 .setContentText(text)
-                .setVibrate(pattern)
                 .setSmallIcon(R.drawable.ic_launcher);
 
         Notification notification = builder.getNotification();

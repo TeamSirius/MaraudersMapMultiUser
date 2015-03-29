@@ -7,7 +7,6 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.Paint;
 import android.graphics.Color;
 import android.graphics.Canvas;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageView;
@@ -92,7 +91,6 @@ public class FloorMapImage implements AdapterView.OnItemSelectedListener {
      * @param y     The y coordinate to draw at
      */
     void draw_point_clear(int x, int y){
-        Log.d("BUILDINGMAPPER", String.format("%b", this.unmarked_image == null));
         Bitmap bitmap = this.unmarked_image.copy(this.unmarked_image.getConfig(),
                                                 true);
         this.draw_point(x, y, bitmap);
@@ -119,8 +117,6 @@ public class FloorMapImage implements AdapterView.OnItemSelectedListener {
         if ( x >= 0 && y >= 0) {
             float scaled_x = x * (float) this.width / (float) this.original_width;
             float scaled_y = y * (float) this.height / (float) this.original_height;
-            Log.d("BUILDINGMAPPER", String.format("(%d, %d) -> (%f, %f)", x, y, scaled_x, scaled_y));
-            Log.d("BUILDINGMAPPER", String.format("%d x %d", this.original_width, this.original_height));
             Paint paint = new Paint();
             paint.setColor(Color.BLUE);
             Canvas canvas = new Canvas(bitmap);
