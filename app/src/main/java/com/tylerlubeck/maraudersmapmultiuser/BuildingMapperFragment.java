@@ -14,8 +14,10 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
@@ -31,10 +33,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class BuildingMapperFragment extends Fragment {
+public class BuildingMapperFragment extends Fragment implements View.OnClickListener{
 
-    private Spinner point_picker;
     private FloorMapImage floor_image;
+    Button update_map;
+    ImageView imageView;
+    TextView loadingText;
+    ProgressBar progress;
+
 
 
     @Override
@@ -43,8 +49,13 @@ public class BuildingMapperFragment extends Fragment {
         RelativeLayout relativeLayout = (RelativeLayout) inflater.inflate(R.layout.activity_building_mapper,
                 container,
                 false);
-        ImageView imageView = (ImageView) relativeLayout.findViewById(R.id.floorImage);
+        this.imageView = (ImageView) relativeLayout.findViewById(R.id.floorImage);
         this.floor_image = new FloorMapImage(imageView, this.getActivity());
+        this.loadingText = (TextView) relativeLayout.findViewById(R.id.map_loading_textview);
+        this.update_map = (Button) relativeLayout.findViewById(R.id.update_map_btn);
+        this.progress = (ProgressBar) relativeLayout.findViewById(R.id.map_loading_spinner);
+        this.update_map.setOnClickListener(this);
+
         this.getLocation();
         return relativeLayout;
     }
@@ -99,5 +110,19 @@ public class BuildingMapperFragment extends Fragment {
                 }
             }
         };
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.update_map_btn:
+                this.imageView.setVisibility(View.GONE);
+                this.update_map.setVisibility(View.GONE);
+                this.loadingText.setVisibility(View.VISIBLE);
+                this.progress.setVisibility(View.VISIBLE);
+                this.loadingText.setText("Looking you up...");
+                this.getLocation();
+                break;
+        }
     }
 }

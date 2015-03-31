@@ -53,16 +53,9 @@ class PostMyLocationAsyncTask extends GenericPOSTAPIKeyTask {
             int y_coordinate = json_response.getInt("y_coordinate");
             int floor_number = json_response.getInt("floor_number");
             String building_name = json_response.getString("building_name");
-            this.floor_image.setImage(building_name, floor_number);
-            this.floor_image.draw_point_clear(x_coordinate, y_coordinate);
-            /*
-            String msg = String.format("You\'re on %s %d at (%d, %d)",
-                                       building_name,
-                                       floor_number,
-                                       x_coordinate,
-                                       y_coordinate);
-           makeNotification("Found you!", msg);
-           */
+            String image_url = json_response.getString("image_url");
+            this.floor_image.setImageFromUrl(image_url, x_coordinate, y_coordinate);
+
         } catch (JSONException e) {
             e.printStackTrace();
         }

@@ -14,6 +14,8 @@ import com.facebook.FacebookSdk;
 import com.facebook.login.LoginManager;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
 
 public class NavigationActivity extends Activity
@@ -41,6 +43,12 @@ public class NavigationActivity extends Activity
         FacebookSdk.sdkInitialize(getApplicationContext());
         this.forceLoginIfNecessary();
         super.onCreate(savedInstanceState);
+
+        /* TODO: Add useful configurations */
+        ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(this).build();
+
+        ImageLoader.getInstance().init(config);
+
         setContentView(R.layout.activity_navigation);
 
         mNavigationDrawerFragment = (NavigationDrawerFragment)

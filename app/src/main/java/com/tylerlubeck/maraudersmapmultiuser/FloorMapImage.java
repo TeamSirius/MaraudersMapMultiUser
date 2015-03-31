@@ -7,9 +7,19 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.Paint;
 import android.graphics.Color;
 import android.graphics.Canvas;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.assist.FailReason;
+import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
+import com.nostra13.universalimageloader.core.listener.ImageLoadingProgressListener;
+
 
 /**
  * Created by Hunter on 10/11/14.
@@ -20,14 +30,13 @@ public class FloorMapImage implements AdapterView.OnItemSelectedListener {
     private final int height;
     private int original_width;
     private int original_height;
-    private final int point_radius;
     private Bitmap unmarked_image;
     private final ImageView image_view;
     private final Context context;
 
     private final int DEFAULT_WIDTH = 1200;
     private final int DEFAULT_HEIGHT = 800;
-    private final int DEFAULT_POINT_RADIUS = 10;
+    private final int DEFAULT_POINT_RADIUS = 20;
 
 
     /**
@@ -44,7 +53,6 @@ public class FloorMapImage implements AdapterView.OnItemSelectedListener {
         /* TODO: Eventually calculate these based on screen size */
         this.width = DEFAULT_WIDTH;
         this.height = DEFAULT_HEIGHT;
-        this.point_radius = DEFAULT_POINT_RADIUS;
         this.image_view = image_view;
         this.context = context;
         this.setImage(building_name, floor_number);
@@ -58,9 +66,56 @@ public class FloorMapImage implements AdapterView.OnItemSelectedListener {
     FloorMapImage(ImageView image_view, Context context) {
         this.width = DEFAULT_WIDTH;
         this.height = DEFAULT_HEIGHT;
-        this.point_radius = DEFAULT_POINT_RADIUS;
         this.image_view = image_view;
         this.context = context;
+    }
+
+    void setImageFromUrl(String imageUrl, final int x_coordinate, final int y_coordinate) {
+        ImageLoader imageLoader = ImageLoader.getInstance();
+        imageLoader.displayImage(imageUrl, this.image_view, null, new ImageLoadingListener() {
+            @Override
+            public void onLoadingStarted(String imageUri, View view) {
+                Log.d("MARAUDERSMAP", "STARTED LOADING IMAGE " + imageUri);
+                View parentView = (View) view.getParent();
+                TextView loadingText = (TextView) parentView.findViewById(R.id.map_loading_textview);
+                loadingText.setText("Magic takes time. So do network requests.");
+            }
+
+            @Override
+            public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
+                Log.e("MARAUDERSMAP", "FAILED TO LOAD IMAGE " + imageUri);
+                Log.e("MARAUDERSMAP", "BECAUSE: " + failReason.toString());
+            }
+
+            @Override
+            public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+                View parentView = (View) view.getParent();
+                TextView loadingText = (TextView) parentView.findViewById(R.id.map_loading_textview);
+                ProgressBar progressBar = (ProgressBar) parentView.findViewById(R.id.map_loading_spinner);
+                Button updateBtn = (Button) parentView.findViewById(R.id.update_map_btn);
+                progressBar.setVisibility(View.GONE);
+                loadingText.setVisibility(View.GONE);
+                view.setVisibility(View.VISIBLE);
+                updateBtn.setVisibility(View.VISIBLE);
+                Log.d("MARAUDERSMAP", "FINISHED LOADING IMAGE FROM " + imageUri);
+                FloorMapImage.this.setImageFromBitmap(loadedImage);
+                FloorMapImage.this.draw_point_clear(x_coordinate, y_coordinate);
+            }
+
+            @Override
+            public void onLoadingCancelled(String imageUri, View view) {
+                Log.e("MARAUDERSMAP", "CANCELLED LOADING IMAGE " + imageUri);
+
+            }
+        }, new ImageLoadingProgressListener() {
+            @Override
+            public void onProgressUpdate(String imageUri, View view, int current, int total) {
+                View parentView = (View) view.getParent();
+                TextView loadingText = (TextView) parentView.findViewById(R.id.map_loading_textview);
+                loadingText.setText("Here we gooooo");
+                Log.d("MARAUDERSMAP", String.format("Image %d/%d loaded", current, total));
+            }
+        });
     }
 
     /**
@@ -71,13 +126,18 @@ public class FloorMapImage implements AdapterView.OnItemSelectedListener {
     void setImage(String building_name, int floor_number) {
         String file_path = building_name.toLowerCase().replaceAll(" ", "_").replaceAll("/", "") + String.valueOf(floor_number);
 
-        this.image_view.setImageResource(this.context.getResources().getIdentifier(file_path ,
+        this.image_view.setImageResource(this.context.getResources().getIdentifier(file_path,
                 "drawable",
                 this.context.getPackageName()));
         Bitmap Floorbitmap = ((BitmapDrawable) this.image_view.getDrawable()).getBitmap();
-        this.original_height = Floorbitmap.getHeight();
-        this.original_width = Floorbitmap.getWidth();
-        this.unmarked_image = Bitmap.createScaledBitmap(Floorbitmap,
+        this.setImageFromBitmap(Floorbitmap);
+
+    }
+
+    private void setImageFromBitmap(Bitmap bitmap) {
+        this.original_height = bitmap.getHeight();
+        this.original_width = bitmap.getWidth();
+        this.unmarked_image = Bitmap.createScaledBitmap(bitmap,
                 this.width,
                 this.height,
                 true);
@@ -120,7 +180,7 @@ public class FloorMapImage implements AdapterView.OnItemSelectedListener {
             Paint paint = new Paint();
             paint.setColor(Color.BLUE);
             Canvas canvas = new Canvas(bitmap);
-            canvas.drawCircle(scaled_x, scaled_y, this.point_radius, paint);
+            canvas.drawCircle(scaled_x, scaled_y, DEFAULT_POINT_RADIUS, paint);
             this.image_view.setImageBitmap(bitmap);
         }
     }

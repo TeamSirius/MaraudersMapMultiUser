@@ -205,13 +205,6 @@ public abstract class AccessPointManager {
     }
 
     /**
-     * Uploads the AccessPoints to the server for the purpose of finding the user's location
-     * @param accessPointData   The JSONArray of Access Point Information
-     */
-    void findMyPosition(JSONArray accessPointData) {
-    }
-
-    /**
      * A Broadcast Receiver class to listen for WifiScanReceived events.
      * When a scan is received, it determines if we have collected the number of required scans.
      *      If so, it averages the access point information and uploads it to the server

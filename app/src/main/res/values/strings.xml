@@ -37,5 +37,6 @@
     <string name="find_friend">Find a Friend</string>
     <string name="logout">Logout</string>
     <string name="title_activity_login">LoginActivity</string>
+    <string name="title_activity_respond_to_request">RespondToRequestActivity</string>
 
 </resources>
