@@ -10,6 +10,7 @@ import android.view.MenuItem;
 import android.support.v4.widget.DrawerLayout;
 
 import com.facebook.AccessToken;
+import com.facebook.AccessTokenTracker;
 import com.facebook.FacebookSdk;
 import com.facebook.login.LoginManager;
 import com.google.android.gms.common.ConnectionResult;
@@ -40,8 +41,7 @@ public class NavigationActivity extends Activity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        FacebookSdk.sdkInitialize(getApplicationContext());
-        this.forceLoginIfNecessary();
+//        this.forceLoginIfNecessary();
         super.onCreate(savedInstanceState);
 
         /* TODO: Add useful configurations */
@@ -57,13 +57,12 @@ public class NavigationActivity extends Activity
 
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mNavigationDrawerFragment.setUp(R.id.navigation_drawer, drawerLayout);
-
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        this.forceLoginIfNecessary();
+        //this.forceLoginIfNecessary();
         this.currentFragment = -1;
         this.onNavigationDrawerItemSelected(0);
     }
@@ -100,7 +99,7 @@ public class NavigationActivity extends Activity
                 break;
             case 2:
                 LoginManager.getInstance().logOut();
-                this.forceLoginIfNecessary();
+                //this.forceLoginIfNecessary();
                 break;
         }
 
