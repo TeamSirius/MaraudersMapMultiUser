@@ -9,6 +9,19 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="SPLASH"/>
+        android:text="@string/app_name"
+        android:layout_centerInParent="true"
+        android:id="@+id/textView"
+        android:textSize="28dp"
+        android:textIsSelectable="false"
+        android:textColor="#FDF5E6" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/imageView"
+        android:layout_above="@+id/textView"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/ic_launcher" />
 
 </RelativeLayout>

@@ -32,7 +32,6 @@ import java.util.List;
 
 public class LoginActivity extends Activity {
 
-    private LoginButton loginButton;
     private SharedPreferences preferences;
     private CallbackManager callbackManager;
     private Button regularLoginButton;
@@ -65,10 +64,6 @@ public class LoginActivity extends Activity {
                 new CreateUserAsyncTask(LoginActivity.this,
                         getString(R.string.account_creation_endpoint),
                         params).execute();
-
-                Intent intent = new Intent(LoginActivity.this, NavigationActivity.class);
-                startActivity(intent);
-                finish();
             }
 
             @Override
@@ -88,44 +83,6 @@ public class LoginActivity extends Activity {
                 LoginManager.getInstance().logInWithReadPermissions(LoginActivity.this, Arrays.asList("public_profile", "user_friends"));
             }
         });
-
-        /*
-        this.loginButton = (LoginButton) findViewById(R.id.facebook_login_button);
-        loginButton.setReadPermissions("user_friends");
-
-        loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
-            @Override
-            public void onSuccess(LoginResult loginResult) {
-                Log.d("BUILDINGMAPPER", "LOGIN SUCCESS");
-                AccessToken accessToken = loginResult.getAccessToken();
-                String tokenString = accessToken.getToken();
-                SharedPreferences.Editor editor = LoginActivity.this.preferences.edit();
-                editor.putString("facebook_token", tokenString);
-                editor.commit();
-
-                List<BasicNameValuePair> params = new ArrayList<BasicNameValuePair>();
-                params.add(new BasicNameValuePair("access_token", tokenString));
-
-                new CreateUserAsyncTask(LoginActivity.this,
-                                        getString(R.string.account_creation_endpoint),
-                                        params).execute();
-
-                Intent intent = new Intent(LoginActivity.this, NavigationActivity.class);
-                startActivity(intent);
-            }
-
-            @Override
-            public void onCancel() {
-                Log.e("BUILDINGMAPPER", "LOGIN CANCEL");
-            }
-
-            @Override
-            public void onError(FacebookException e) {
-                Log.e("BUILDINGMAPPER", "ERROR: " + e.toString());
-            }
-        });
-
-        */
     }
 
     @Override
