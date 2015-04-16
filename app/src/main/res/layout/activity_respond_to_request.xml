@@ -10,15 +10,18 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/requestor_name_textview"/>
+
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Allow"
-        android:id="@+id/allow_response_btn"/>
+        android:id="@+id/allow_response_btn"
+        android:layout_below="@+id/requestor_name_textview"/>
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Deny"
-        android:id="@+id/deny_response_btn"/>
+        android:id="@+id/deny_response_btn"
+        android:layout_below="@id/allow_response_btn"/>
 </RelativeLayout>

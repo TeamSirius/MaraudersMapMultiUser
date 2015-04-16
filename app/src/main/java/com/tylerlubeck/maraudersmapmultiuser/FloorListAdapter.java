@@ -7,6 +7,8 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import com.tylerlubeck.maraudersmapmultiuser.Models.Floor;
+
 import java.util.ArrayList;
 
 /**

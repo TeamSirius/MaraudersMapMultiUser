@@ -6,6 +6,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v4.content.WakefulBroadcastReceiver;
 
+import com.tylerlubeck.maraudersmapmultiuser.Activities.GcmIntentService;
+
 /**
  * Created by Tyler on 2/23/2015.
  */

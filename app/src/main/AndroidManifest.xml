@@ -42,19 +42,18 @@
             </intent-filter>
         </receiver>
 
-        <service android:name=".GcmIntentService" />
+        <service android:name=".Activities.GcmIntentService" />
 
         <activity
-            android:name=".NavigationActivity"
+            android:name=".Activities.MainActivity"
             android:label="@string/title_activity_navigation" >
         </activity>
 
         <activity
-            android:name=".SplashScreenActivity"
+            android:name=".Activities.SplashScreenActivity"
             android:label="@string/title_activity_navigation" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -65,7 +64,7 @@
             android:excludeFromRecents="true"/>
 
         <activity
-            android:name=".LoginActivity"
+            android:name=".Activities.LoginActivity"
             android:label="@string/title_activity_login" >
         </activity>
     </application>

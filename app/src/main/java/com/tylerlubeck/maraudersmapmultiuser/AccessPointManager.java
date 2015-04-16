@@ -4,12 +4,13 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
-import android.preference.PreferenceManager;
-import android.util.Log;
 import android.widget.Toast;
+
+import com.tylerlubeck.maraudersmapmultiuser.Models.AccessPoint;
+import com.tylerlubeck.maraudersmapmultiuser.Models.FloorMapImage;
+import com.tylerlubeck.maraudersmapmultiuser.Tasks.PostAccessPointsTask;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -26,7 +27,7 @@ import java.util.Map;
  */
 public abstract class AccessPointManager {
 
-    protected abstract void allDataReceived(JSONArray accessPointData);
+    protected abstract void allDataReceived(ArrayList<AccessPoint> accessPointData);
 
     private enum UploadType {
         UPLOAD,
@@ -55,7 +56,7 @@ public abstract class AccessPointManager {
      * @param username          The username to authenticate with
      * @param password          The password to authenticate with
      */
-    AccessPointManager(Context _context, FloorMapImage _floor_image, String _location_uri,
+    public AccessPointManager(Context _context, FloorMapImage _floor_image, String _location_uri,
                        String username, String password) {
         this.instantiate(_context, this.NUM_MAPPING_POLLS, username, password);
         this.floor_image = _floor_image;
@@ -68,7 +69,7 @@ public abstract class AccessPointManager {
      * Create an AccessPointManager that allows for uploading the access points to the related location
      * @param _context          The context to operate with
      */
-    AccessPointManager(Context _context) {
+    public AccessPointManager(Context _context) {
         this.instantiate(_context, this.NUM_QUERY_POLLS, username, password);
         this.uploadType = UploadType.QUERY;
         this.wifiManager.startScan();
@@ -158,13 +159,13 @@ public abstract class AccessPointManager {
      *
      * @return a JSONArray of AccessPoint
      */
-    private JSONArray averageAccessPointsMap(String location_uri) {
+    private ArrayList<AccessPoint> averageAccessPointsMap(String location_uri) {
         double mean_signal_strength;
         double RSS_std_deviation;
         JSONArray all_access_points = new JSONArray();
+        ArrayList<AccessPoint> accessPoints = new ArrayList<AccessPoint>();
 
         for(Map.Entry<String, ArrayList<Integer>> entry: this.MAC_Aggregator.entrySet()) {
-            try {
                 mean_signal_strength = mean_value(entry.getValue());
                 RSS_std_deviation = standard_deviation(entry.getValue(), mean_signal_strength);
 
@@ -172,13 +173,9 @@ public abstract class AccessPointManager {
                                                           mean_signal_strength,
                                                           RSS_std_deviation,
                                                           location_uri);
-
-                all_access_points.put(accessPoint.toJSON());
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+                accessPoints.add(accessPoint);
         }
-        return all_access_points;
+        return accessPoints;
     }
 
 
@@ -226,12 +223,12 @@ public abstract class AccessPointManager {
             if (outerAPM.num_times_called == outerAPM.num_polls) {
                 /* Immediately unregister the receiver so that we don't listen for any more */
                 outerAPM.context.unregisterReceiver(outerAPM.broadcastReceiver);
-                JSONArray uploadable = averageAccessPointsMap(outerAPM.location_uri);
+                ArrayList<AccessPoint> uploadable = averageAccessPointsMap(outerAPM.location_uri);
 
                 /* Either do one or the other */
                 if (outerAPM.uploadType == UploadType.UPLOAD){
                     /* Upload the points and associate them with this location */
-                    uploadNewPoints(uploadable);
+                    //uploadNewPoints(uploadable);
                 } else if (outerAPM.uploadType == UploadType.QUERY) {
                     /* Use the seen points to compute our location */
                     allDataReceived(uploadable);

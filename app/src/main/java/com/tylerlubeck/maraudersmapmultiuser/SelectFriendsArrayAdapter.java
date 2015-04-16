@@ -7,8 +7,9 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import com.tylerlubeck.maraudersmapmultiuser.Models.FacebookFriend;
+
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by Tyler on 2/23/2015.
@@ -17,7 +18,7 @@ public class SelectFriendsArrayAdapter extends ArrayAdapter<FacebookFriend> {
     private final Context context;
     private final ArrayList<FacebookFriend> friends;
 
-    SelectFriendsArrayAdapter(Context context, ArrayList<FacebookFriend> friends ) {
+    public SelectFriendsArrayAdapter(Context context, ArrayList<FacebookFriend> friends ) {
         super(context, android.R.layout.simple_list_item_1, friends);
 
         this.context = context;

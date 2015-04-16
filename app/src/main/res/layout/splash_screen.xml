@@ -14,7 +14,8 @@
         android:id="@+id/textView"
         android:textSize="28dp"
         android:textIsSelectable="false"
-        android:textColor="#FDF5E6" />
+        android:textColor="#FDF5E6"
+        android:gravity="center"/>
 
     <ImageView
         android:layout_width="wrap_content"
