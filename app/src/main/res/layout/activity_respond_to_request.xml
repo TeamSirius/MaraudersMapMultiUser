@@ -29,6 +29,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_below="@id/requestor_name_textview"
+        android:id="@+id/buttons"
         android:layout_marginTop="20dp"
         android:gravity="center">
 
@@ -46,5 +47,16 @@
             android:id="@+id/deny_response_btn"/>
 
     </LinearLayout>
+
+    <ProgressBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/buttons"
+        android:indeterminate="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:visibility="gone"
+        android:id="@+id/loading"
+        />
 
 </RelativeLayout>

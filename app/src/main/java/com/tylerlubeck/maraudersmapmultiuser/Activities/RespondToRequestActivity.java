@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,6 +33,10 @@ public class RespondToRequestActivity extends Activity implements View.OnClickLi
     TextView requestorView;
     String requestor;
     int requestor_id;
+    ProgressBar progress;
+    Button allowBtn;
+    Button denyBtn;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,9 +48,10 @@ public class RespondToRequestActivity extends Activity implements View.OnClickLi
         }
         this.requestor = extras.getString("requestor");
         this.requestor_id = extras.getInt("requestor_id");
+        progress = (ProgressBar) findViewById(R.id.loading);
 
-        Button allowBtn = (Button) findViewById(R.id.allow_response_btn);
-        Button denyBtn = (Button) findViewById(R.id.deny_response_btn);
+        allowBtn = (Button) findViewById(R.id.allow_response_btn);
+        denyBtn = (Button) findViewById(R.id.deny_response_btn);
         TextView textView = (TextView) findViewById(R.id.requestor_name_textview);
 
         textView.setText(String.format("%s wants to know!", this.requestor));
@@ -59,6 +65,9 @@ public class RespondToRequestActivity extends Activity implements View.OnClickLi
         boolean allow = view.getId() == R.id.allow_response_btn;
 
         RespondToRequestBody respondToRequestBody = new RespondToRequestBody(allow, requestor_id);
+        this.progress.setVisibility(View.VISIBLE);
+        this.allowBtn.setEnabled(false);
+        this.denyBtn.setEnabled(false);
 
         if (allow) {
             this.allowRequest(respondToRequestBody);
