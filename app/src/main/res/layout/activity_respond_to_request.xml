@@ -4,24 +4,47 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
-    tools:context="com.tylerlubeck.maraudersmapmultiuser.RespondToRequestActivity">
+    tools:context="com.tylerlubeck.maraudersmapmultiuser.Activities.RespondToRequestActivity">
 
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/requestor_name_textview"/>
+        android:text="Where are you?"
+        android:textSize="24dp"
+        android:gravity="center_horizontal"
+        android:layout_alignParentTop="true"
+        android:id="@+id/where_are_you"
+        />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/requestor_name_textview"
+        android:layout_below="@+id/where_are_you"
+        android:gravity="center_horizontal"
+        android:textSize="18dp"
+        android:text="Tyler Lubeck wants to know!"/>
 
-    <Button
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Allow"
-        android:id="@+id/allow_response_btn"
-        android:layout_below="@+id/requestor_name_textview"/>
+        android:orientation="horizontal"
+        android:layout_below="@id/requestor_name_textview"
+        android:layout_marginTop="20dp"
+        android:gravity="center">
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Deny"
-        android:id="@+id/deny_response_btn"
-        android:layout_below="@id/allow_response_btn"/>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Allow"
+            android:id="@+id/allow_response_btn"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="30dp"
+            android:text="Deny"
+            android:id="@+id/deny_response_btn"/>
+
+    </LinearLayout>
+
 </RelativeLayout>

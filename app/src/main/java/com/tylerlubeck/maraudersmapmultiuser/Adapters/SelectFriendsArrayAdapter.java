@@ -1,4 +1,4 @@
-package com.tylerlubeck.maraudersmapmultiuser;
+package com.tylerlubeck.maraudersmapmultiuser.Adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;

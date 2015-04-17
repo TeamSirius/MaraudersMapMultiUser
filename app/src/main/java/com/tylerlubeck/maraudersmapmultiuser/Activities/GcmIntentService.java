@@ -13,7 +13,6 @@ import android.util.Log;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.tylerlubeck.maraudersmapmultiuser.GcmBroadcastReceiver;
 import com.tylerlubeck.maraudersmapmultiuser.R;
-import com.tylerlubeck.maraudersmapmultiuser.RespondToRequestActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -123,7 +122,7 @@ public class GcmIntentService extends IntentService {
             Notification.Builder builder = new Notification.Builder(this)
                     .setSmallIcon(R.drawable.ic_launcher)
                     .setContentTitle(String.format("Found %s!", friend_name))
-                    .setContentText("And we promise they're up to no good")
+                    .setContentText("And we promise they're up to no good.")
                     .setContentIntent(pendingIntent)
                     .setAutoCancel(true);
 

@@ -1,4 +1,4 @@
-package com.tylerlubeck.maraudersmapmultiuser;
+package com.tylerlubeck.maraudersmapmultiuser.Fragment;
 
 import android.annotation.SuppressLint;
 import android.app.Fragment;

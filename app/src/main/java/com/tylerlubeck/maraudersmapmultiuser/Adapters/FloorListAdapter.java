@@ -1,4 +1,4 @@
-package com.tylerlubeck.maraudersmapmultiuser;
+package com.tylerlubeck.maraudersmapmultiuser.Adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -8,6 +8,7 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.tylerlubeck.maraudersmapmultiuser.Models.Floor;
+import com.tylerlubeck.maraudersmapmultiuser.R;
 
 import java.util.ArrayList;
 

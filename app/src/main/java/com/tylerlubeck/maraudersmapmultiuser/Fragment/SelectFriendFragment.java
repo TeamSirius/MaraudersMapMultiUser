@@ -1,6 +1,9 @@
 package com.tylerlubeck.maraudersmapmultiuser.Fragment;
 
 import android.app.ListFragment;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -12,10 +15,12 @@ import android.widget.Toast;
 import com.facebook.AccessToken;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
+import com.tylerlubeck.maraudersmapmultiuser.API.PositioningService;
+import com.tylerlubeck.maraudersmapmultiuser.API.RequestInterceptors;
+import com.tylerlubeck.maraudersmapmultiuser.Activities.MainActivity;
 import com.tylerlubeck.maraudersmapmultiuser.Models.FacebookFriend;
-import com.tylerlubeck.maraudersmapmultiuser.Tasks.GetFriendLocationAsyncTask;
 import com.tylerlubeck.maraudersmapmultiuser.R;
-import com.tylerlubeck.maraudersmapmultiuser.SelectFriendsArrayAdapter;
+import com.tylerlubeck.maraudersmapmultiuser.Adapters.SelectFriendsArrayAdapter;
 
 
 import org.json.JSONArray;
@@ -23,6 +28,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+
+import retrofit.Callback;
+import retrofit.RestAdapter;
+import retrofit.RetrofitError;
+import retrofit.android.AndroidLog;
+import retrofit.client.Response;
 
 /**
  * Created by Tyler on 2/23/2015.
@@ -32,9 +43,19 @@ public class SelectFriendFragment extends ListFragment {
     ArrayList<FacebookFriend> friendsList;
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
-        this.friendsList = new ArrayList<FacebookFriend>();
         super.onActivityCreated(savedInstanceState);
+
+        View headerView = getActivity().getLayoutInflater().inflate(R.layout.list_header, null);
+        getListView().addHeaderView(headerView);
+
+        this.friendsList = new ArrayList<FacebookFriend>();
         this.fillList();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        setListAdapter(null);
     }
 
     private void fillList() {
@@ -45,12 +66,10 @@ public class SelectFriendFragment extends ListFragment {
                     @Override
                     public void onCompleted(JSONArray jsonArray, GraphResponse graphResponse) {
                         int numFriends = jsonArray.length();
-                        Log.d("MARAUDERSMAP", "YOU HAVE THIS MANY FRIENDS: " + Integer.toString(numFriends));
                         for(int i = 0; i < numFriends; i++){
                             try {
                                 FacebookFriend friend = new FacebookFriend(jsonArray.getJSONObject(i));
                                 SelectFriendFragment.this.friendsList.add(friend);
-
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
@@ -64,26 +83,53 @@ public class SelectFriendFragment extends ListFragment {
         request.executeAsync();
     }
 
-    @Override
-    public void onListItemClick(ListView listView, View view, int position, long id) {
-        FacebookFriend fbFriend = friendsList.get(position);
-        Toast.makeText(this.getActivity(), "Selected Friend: " + fbFriend.getName(), Toast.LENGTH_LONG).show();
+    private PositioningService getPositioningService() {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        String username = preferences.getString("facebook_username", "");
-        String api_key = preferences.getString("api_key", "");
+        String apiKey = preferences.getString("api_key", "");
+        String facebookUsername = preferences.getString("facebook_username", "");
+        RestAdapter restAdapter  = new RestAdapter.Builder()
+                .setEndpoint(getString(R.string.root_server))
+                .setLogLevel(RestAdapter.LogLevel.FULL)
+                .setLog(new AndroidLog(MainActivity.LOG_TAG))
+                .setRequestInterceptor(new RequestInterceptors.AuthorizedHeaderIntercepter(facebookUsername, apiKey))
+                .build();
 
-        if (username.isEmpty() || api_key.isEmpty()) {
-            Log.e("MARAUDERSMAP", "Could not get a username or api key");
-        }
+        return restAdapter.create(PositioningService.class);
+    }
 
-        JSONObject data = new JSONObject();
-        try {
-            data.put("friend_fb_id", fbFriend.getId());
-        } catch (JSONException e) {
-            e.printStackTrace();
+
+
+    @Override
+    public void onListItemClick(final ListView listView, View view, int position, long id) {
+        if (position == 0) {
+            /* If this is the header view, stop processing */
+            return;
         }
-        new GetFriendLocationAsyncTask(getActivity().getString(R.string.get_friend_location_endpoint),
-                                       data, username, api_key).execute();
-        getFragmentManager().popBackStackImmediate();
+        final FacebookFriend fbFriend = (FacebookFriend) listView.getItemAtPosition(position);
+        PositioningService positioningService = getPositioningService();
+        positioningService.findFriend(fbFriend, new Callback<Object>() {
+            @Override
+            public void success(Object o, Response response) {
+                Log.d(MainActivity.LOG_TAG, "FRIEND REQUEST WENT THROUGH");
+                Toast.makeText(getActivity(),
+                        String.format("Asking %s for their location...", fbFriend.getName()),
+                        Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                NotificationManager notificationManager = (NotificationManager) getActivity()
+                                                                .getSystemService(Context.NOTIFICATION_SERVICE);
+                Log.e(MainActivity.LOG_TAG, "Unable to request friend's position");
+                Log.e(MainActivity.LOG_TAG, error.getUrl());
+                Log.e(MainActivity.LOG_TAG, error.getResponse().getReason());
+                Notification.Builder builder = new Notification.Builder(getActivity())
+                        .setSmallIcon(R.drawable.ic_launcher)
+                        .setContentTitle("Couldn't find your friend")
+                        .setContentText(String.format("Couldn't find %s", fbFriend.getName()));
+
+                notificationManager.notify(1, builder.getNotification());
+            }
+        });
     }
 }

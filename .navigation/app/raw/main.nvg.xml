@@ -14,7 +14,7 @@
     <statePointEntry>
       <state      
         class = "com.android.tools.idea.editors.navigation.model.ActivityState"      
-        className = "com.tylerlubeck.maraudersmapmultiuser.RespondToRequestActivity"/>
+        className = "com.tylerlubeck.maraudersmapmultiuser.Activities.RespondToRequestActivity"/>
       <point      
         x = "600"      
         y = "200"/>

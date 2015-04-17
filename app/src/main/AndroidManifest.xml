@@ -58,7 +58,7 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".RespondToRequestActivity"
+        <activity android:name=".Activities.RespondToRequestActivity"
             android:launchMode="singleTask"
             android:taskAffinity=""
             android:excludeFromRecents="true"/>

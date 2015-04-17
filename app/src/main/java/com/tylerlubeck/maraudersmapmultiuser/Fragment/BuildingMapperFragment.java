@@ -46,8 +46,6 @@ public class BuildingMapperFragment extends Fragment implements View.OnClickList
     private TextView we_found_you;
     private TextView user_location;
 
-
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         RelativeLayout relativeLayout = (RelativeLayout) inflater.inflate(R.layout.show_location_layout,
@@ -106,7 +104,7 @@ public class BuildingMapperFragment extends Fragment implements View.OnClickList
         String image_url = args.getString("image_url");
         int x_coordinate = args.getInt("x_coordinate");
         int y_coordinate = args.getInt("y_coordinate");
-        this.we_found_you.setText(args.getString("friend_name"));
+        this.we_found_you.setText(String.format("Found %s:", args.getString("friend_name")));
         this.we_found_you.setVisibility(View.VISIBLE);
         this.floor_image.setImageFromUrl(image_url, x_coordinate, y_coordinate);
     }
@@ -167,11 +165,17 @@ public class BuildingMapperFragment extends Fragment implements View.OnClickList
                                          location.getYCoordinate());
         this.we_found_you.setVisibility(View.VISIBLE);
         this.user_location.setVisibility(View.VISIBLE);
-        this.user_location.setText(location.getFloorName());
+        this.user_location.setText(String.format("Halligan Floor %d", location.getFloorNumber()));
 
     }
 
     private void displayError() {
+
+        this.loadingText.setText("Couldn't find you! :(");
+        this.progress.setVisibility(View.GONE);
+        this.imageView.setVisibility(View.INVISIBLE);
+        this.update_map.setVisibility(View.VISIBLE);
+        this.update_map.setText("Try again?");
 
     }
 
@@ -179,8 +183,11 @@ public class BuildingMapperFragment extends Fragment implements View.OnClickList
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.update_map_btn:
-                this.imageView.setVisibility(View.GONE);
+
                 this.update_map.setVisibility(View.GONE);
+                this.update_map.setText("Update");
+
+                this.imageView.setVisibility(View.INVISIBLE);
                 this.we_found_you.setVisibility(View.GONE);
                 this.user_location.setVisibility(View.GONE);
                 this.loadingText.setVisibility(View.VISIBLE);

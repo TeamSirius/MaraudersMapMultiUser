@@ -10,6 +10,16 @@ public class MyLocation {
     int y_coordinate;
     String image_url;
 
+    public MyLocation() {}
+
+    public MyLocation(String buildingName, int floorNumber, int x, int y, String imageUrl) {
+        this.building_name = buildingName;
+        this.floor_number = floorNumber;
+        this.x_coordinate = x;
+        this.y_coordinate = y;
+        this.image_url = imageUrl;
+    }
+
     public String getImageUrl() {
         return image_url;
     }
@@ -24,6 +34,10 @@ public class MyLocation {
 
     public String getFloorName() {
         return String.format("%s Floor %d", building_name, floor_number);
+    }
+
+    public int getFloorNumber() {
+        return this.floor_number;
     }
 
     public String toString() {

@@ -8,6 +8,7 @@ import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.tylerlubeck.maraudersmapmultiuser.R;
 import com.tylerlubeck.maraudersmapmultiuser.Tasks.GenericGETTask;
@@ -61,6 +62,7 @@ public class CreateUserAsyncTask extends GenericGETTask {
             editor.putString("facebook_username", facebook_username);
             editor.putString("api_key", api_key);
             editor.commit();
+
             Log.d("MARAUDERSMAP", String.format("%s: %s", response_data.getString("username"), response_data.getString("api_key")));
 
             registerForGCM(facebook_username, api_key);

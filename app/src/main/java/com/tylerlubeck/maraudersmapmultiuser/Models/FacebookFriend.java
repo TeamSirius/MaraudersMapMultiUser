@@ -1,5 +1,9 @@
 package com.tylerlubeck.maraudersmapmultiuser.Models;
 
+import android.util.Log;
+
+import com.tylerlubeck.maraudersmapmultiuser.Activities.MainActivity;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -8,15 +12,15 @@ import org.json.JSONObject;
  */
 public class FacebookFriend {
     private String name;
-    private String id;
+    private String friend_fb_id;
 
     public FacebookFriend(JSONObject friend) {
         try {
             this.name = friend.getString("name");
-            this.id = friend.getString("id");
+            this.friend_fb_id = friend.getString("id");
         } catch (JSONException e) {
             this.name = "";
-            this.id = "";
+            this.friend_fb_id = "";
             e.printStackTrace();
         }
     }
@@ -26,10 +30,10 @@ public class FacebookFriend {
     }
 
     public String getId() {
-        return this.id;
+        return this.friend_fb_id;
     }
 
     public String toString() {
-        return String.format("%s: %s", this.name, this.id);
+        return String.format("%s: %s", this.name, this.friend_fb_id);
     }
 }

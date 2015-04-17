@@ -1,6 +1,6 @@
 package com.tylerlubeck.maraudersmapmultiuser.API;
 
-import com.tylerlubeck.maraudersmapmultiuser.Models.FindFriendBody;
+import com.tylerlubeck.maraudersmapmultiuser.Models.FacebookFriend;
 import com.tylerlubeck.maraudersmapmultiuser.Models.LocateMeBody;
 import com.tylerlubeck.maraudersmapmultiuser.Models.MyLocation;
 import com.tylerlubeck.maraudersmapmultiuser.Models.RespondToRequestBody;
@@ -14,10 +14,10 @@ import retrofit.http.POST;
  */
 public interface PositioningService {
     @POST("/api/v1/user_location/friend/")
-    void findFriend(@Body FindFriendBody body, Callback callback);
+    void findFriend(@Body FacebookFriend body, Callback<Object> callback);
 
-    @POST("/api/v1/user_location/response/")
-    void respondToRequest(@Body RespondToRequestBody body, Callback callback);
+    @POST("/api/v1/user_location/respond/")
+    void respondToRequest(@Body RespondToRequestBody body, Callback<Object> callback);
 
     @POST("/api/v1/user_location/me/")
     void locateMe(@Body LocateMeBody body, Callback<MyLocation> callback);

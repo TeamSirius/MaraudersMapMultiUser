@@ -86,6 +86,14 @@ public class FloorMapImage implements AdapterView.OnItemSelectedListener {
             public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
                 Log.e("MARAUDERSMAP", "FAILED TO LOAD IMAGE " + imageUri);
                 Log.e("MARAUDERSMAP", "BECAUSE: " + failReason.toString());
+                View parentView = (View) view.getParent();
+                TextView loadingText = (TextView) parentView.findViewById(R.id.map_loading_textview);
+                ProgressBar progressBar = (ProgressBar) parentView.findViewById(R.id.map_loading_spinner);
+                Button updateBtn = (Button) parentView.findViewById(R.id.update_map_btn);
+                progressBar.setVisibility(View.GONE);
+                loadingText.setVisibility(View.GONE);
+                view.setVisibility(View.VISIBLE);
+                updateBtn.setVisibility(View.VISIBLE);
             }
 
             @Override
